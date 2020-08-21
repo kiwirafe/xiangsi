@@ -1,11 +1,17 @@
 import os
 import re
 import math
-import jieba 
-from decimal import Decimal
-import time
+import sys
+import jieba
+import hashlib
 
 class calculator(object):
+    def __init__(self):
+        self.UseLog = True
+        self.FileDir = ""
+        self.InputTarget = 0
+        self.feature = 64
+
     def CheckInputType(self, input):
         if isinstance(input, str) == True:
             return "f"
@@ -14,18 +20,15 @@ class calculator(object):
         else:
             raise Exception("Only lists and files are supported by now.")
 
-
-    # 对句子进行中文分词
+    #中文分词
     def SegDepart(self, sentence):
-        # 对文档中的每一行进行中文分词
         StopWords = [line.strip() for line in open("stoptext.txt", encoding='utf-8').readlines()]
-        SentenceDepart = jieba.cut(sentence.strip(), cut_all=False)
-        # 输出结果为output
+        SentenceDepart = jieba.cut(sentence.strip())
+
         output = []
-        # 去停用词
         for word in SentenceDepart:
             if word not in StopWords:
-                if word != '\t':
+                if word != '\n':
                     output.append(word)
         return output
 
@@ -41,9 +44,17 @@ class calculator(object):
     def input2list(self, input):
         result = []
         
-        with open(input, encoding='gbk') as f:
-            corpus = f.read()
-            LineSplit = re.split(r'[。！；？，]', corpus.strip()) #按符号分句
+        if self.CheckInputType(input) == "f":
+            try:
+                with open(input, encoding='utf-8') as f:
+                    corpus = f.read()
+            except:
+                with open(input, encoding='gbk') as f:
+                    corpus = f.read()
+        else:
+            corpus = "".join(input)
+
+        LineSplit = re.split(r'[。！；？，]', corpus.strip()) #按符号分句
 
         for line in LineSplit:
             temp = self.SegDepart(line)
@@ -54,7 +65,11 @@ class calculator(object):
         return dict(sorted(input.items(), \
             key=lambda kv: kv[1], reverse=True))
 
-    #计算tf值 
+    def HashString(self, s):
+        h = hashlib.sha256(s.encode('utf-8'))
+        return bin(int(h.hexdigest(), 16))[-self.feature:]
+
+    #计算TF值 
     def GetTF(self, input):
         corpus = self.input2list(input)
         tf = {}
@@ -66,8 +81,8 @@ class calculator(object):
             tf[key] = value / wordsSum
         return tf
 
-    #计算idf值
-    def GetIDF(self, input, UseLog=True, InputTarget=None):
+    #计算IDF值
+    def GetIDF(self, input):
         if self.CheckInputType(input) == "f":
             corpus = self.input2list(input)
         else:
@@ -80,10 +95,11 @@ class calculator(object):
         idf = {}
         FileLists = []
         if self.CheckInputType(input) == "f":
-            FileDir = input.rsplit('/', 1)[0] + "/"
+            if self.FileDir == "":
+                self.FileDir = input.rsplit('/', 1)[0] + "/"
 
-            for inputname in os.listdir(FileDir):
-                FileLists.append(self.input2list(FileDir + inputname))
+            for inputname in os.listdir(self.FileDir):
+                FileLists.append(self.input2list(self.FileDir + inputname))
         
         else:
             FileLists = input
@@ -97,26 +113,21 @@ class calculator(object):
                 if word in x:
                     freq[word] += 1
 
-        #将每个词的出现次数转换为idf值    
         for word in freq:
             #idf的公式
             TempIDF = total / (freq[word] + 1)
-            if UseLog == True:
+            if self.UseLog == True:
                 idf[word] = math.log(TempIDF)
             else:
                 idf[word] = TempIDF
         return idf
     
-    def GetTFIDF(self, input, UseLog=True, InputTarget=None):
-        """doc_id是语料库中文档的id，input是txt的路径"""
+    def GetTFIDF(self, input):
 
-        if isinstance(InputTarget, str) == True:
-            tf = self.GetTF(InputTarget)
-            idf = self.GetIDF(input, UseLog, InputTarget)
-        elif isinstance(InputTarget, int) == True and self.CheckInputType(input) == "l":
-            tf = self.GetTF(input[InputTarget])
-            idf = self.GetIDF(input, UseLog, input[InputTarget])
-        elif InputTarget == None:
+        if self.CheckInputType(input) == "l":
+            tf = self.GetTF(input[self.InputTarget])
+            idf = self.GetIDF(input)
+        elif self.CheckInputType(input) == "f":
             tf = self.GetTF(input)
             idf = self.GetIDF(input)
         else:
@@ -129,9 +140,9 @@ class calculator(object):
         
         return result
 
-    def cal(self, input1, input2, UseLog=True, InputTarget1=None, InputTarget2=None):
-        result = self.GetTFIDF(input1, UseLog, InputTarget1)
-        result2 = self.GetTFIDF(input2, UseLog, InputTarget2)
+    def cossim(self, input1, input2):
+        result = self.GetTFIDF(input1)
+        result2 = self.GetTFIDF(input2)
 
         merge = result.copy()
         merge.update(result2)
@@ -158,5 +169,94 @@ class calculator(object):
             sq1 += pow(Result1Cut[i], 2)
             sq2 += pow(Result2Cut[i], 2)
 
-        FinalResult = round(Decimal(TopSum) / Decimal(math.sqrt(sq1) * math.sqrt(sq2)), 4)
+        FinalResult = round(TopSum / (math.sqrt(sq1) * math.sqrt(sq2)), 4)
         return FinalResult
+    
+    def simhash(self, input1, input2):
+        TFIDFResult = self.SortDict(self.GetTFIDF(input1))
+        TFIDFResult2 = self.SortDict(self.GetTFIDF(input2))
+
+        FirstResults = {}
+        FirstResults2 = {}
+
+        i = 0
+        for key, value in TFIDFResult.items():
+            FirstResults[key] = value
+            i += 1
+            if i >= self.feature:
+                break
+
+        i = 0
+        for key, value in TFIDFResult2.items():
+            FirstResults2[key] = value
+            i += 1
+            if i >= self.feature:
+                break
+
+        result = FirstResults
+        result2 = FirstResults2
+
+        HashResults = {}
+        HashResults2 = {}
+        
+        for key, value in result.items():
+            HashResults[self.HashString(key)] = value
+        
+        for key, value in result2.items():
+            HashResults2[self.HashString(key)] = value
+
+        result = []
+        result2 = []
+
+        i = 0
+        for key, value in HashResults.items():
+            result.append([])
+            for x in key:
+                if int(x) == 0:
+                    result[i].append(value * -1)
+                else:
+                    result[i].append(value)
+            i += 1
+
+        i = 0
+        for key, value in HashResults2.items():
+            result2.append([])
+            for x in key:
+                if int(x) == 0:
+                    result2[i].append(value * -1)
+                else:
+                    result2[i].append(value)
+            i += 1
+
+        FinalResult = []
+        FinalResult2 = []
+        
+        for i in range(self.feature):
+            FinalResult.append(0)
+            for x in result:
+                FinalResult[i] += x[i]
+
+            FinalResult2.append(0)
+            for x in result2:
+                FinalResult2[i] += x[i]
+
+        FinalString = ""
+        for x in FinalResult:
+            if x > 0:
+                FinalString += "1"
+            else:
+                FinalString += "0"
+
+        FinalString2 = ""
+        for x in FinalResult2:
+            if x > 0:
+                FinalString2 += "1"
+            else:
+                FinalString2 += "0"
+
+        hamming = 0
+        for i, x in enumerate(FinalString):
+            if x != FinalString2[i]:
+                hamming += 1
+        
+        return 1 - hamming / self.feature

@@ -1,0 +1,9 @@
+README.md
+setup.py
+xiangshi/__init__.py
+xiangshi/main.py
+xiangshi.egg-info/PKG-INFO
+xiangshi.egg-info/SOURCES.txt
+xiangshi.egg-info/dependency_links.txt
+xiangshi.egg-info/requires.txt
+xiangshi.egg-info/top_level.txt

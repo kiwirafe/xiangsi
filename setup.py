@@ -5,13 +5,13 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="xiangshi",
-    version="1.2.0",
+    version="2.1.0",
     author="kiwirafe",
     author_email="kiwirafe@gmail.com",
     description="中文文本相似度计算器 - 相识",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/kiwirafe/xiangshi",
+    url="https://kiwirafe.github.io",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",

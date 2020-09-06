@@ -97,8 +97,16 @@ data = [
   - Pypi: 
   https://pypi.org/project/xiangshi/
   - Github:
+  https://gitee.com/kiwirafe/xiangshi
+  - 相识极速版(XiangshiFast):
   https://github.com/kiwirafe/xiangshi
-
+  - 下载数量:
+  https://pepy.tech/project/xiangshi
+  - Gitee(中国开源):
+  https://pypi.org/project/XiangshiFast/
+  - 清华镜像链接(无实际价值):
+  https://pypi.tuna.tsinghua.edu.cn/simple/xiangshi/
+  
 ### 版本历史
   - v0.1.0: 初始版本
     - 只有TFIDF计算

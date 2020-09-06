@@ -30,7 +30,6 @@ $ pip3 install xiangshi
 ```sh
 $ pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple xiangshi
 ```
-pip3也可以是pip，根据个人环境选择
 
 #### 版本2.1.0来了！
   - **版本2.0.0发布时有点匆忙，发布错版本了，请大家赶紧升级之本版本：**
@@ -91,6 +90,14 @@ data = [
   test3 ~ 10.txt
 ]
 ```
+
+### 其他链接：
+  - English Version of README.md:
+  https://github.com/kiwirafe/xiangshi/blob/master/README(Eng).md
+  - Pypi: 
+  https://pypi.org/project/xiangshi/
+  - Github:
+  https://github.com/kiwirafe/xiangshi
 
 ### 版本历史
   - v0.1.0: 初始版本
@@ -166,4 +173,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-

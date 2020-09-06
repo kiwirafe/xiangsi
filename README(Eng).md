@@ -61,9 +61,7 @@ xs.GetIDF (Input)
 xs.GetTFIDF （Input)
 ```
   - Input - input value, which can be the address of a file or a list
-  - 
   - Input type for calculating text similarity
-  - 
   - At present, two types of acquaintance are supported: file and list file
 
 Version history

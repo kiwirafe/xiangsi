@@ -35,15 +35,12 @@ $ pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple xiangshi
 ```
 
 ### Usage method
-
 #### Calculate text similarity
-
 ##### Cosine similarity
-
+```py
 import xiangshi as xs
-
 xs.cossim (Input1, Input2)
-
+```
 ##### Simhash & Minhash similarity
 ```py
 import xiangshi as xs
@@ -57,134 +54,65 @@ xs.minhash (Input1, Input2)
   - Input2 - the second input value, which can be the address of a file or a list
 
 ##### Calculate TF, IDF, TFIDF
-
+```py
 import xiangshi as xs
-
 xs.GetTF (Input)
-
 xs.GetIDF (Input)
-
 xs.GetTFIDF （Input)
-
-Input - input value, which can be the address of a file or a list
-
-Input type for calculating text similarity
-
-At present, two types of acquaintance are supported: file and list file
-
-
-
-data/
-
-Wei test1.txt
-
-Wei test2.txt
-
-Wei test3 ~ 10.txt
-
-List (function is not perfect yet)
-
-
-
-data = [
-
-test1.txt
-
-test2.txt
-
-test3 ~ 10.txt
-
-]
+```
+  - Input - input value, which can be the address of a file or a list
+  - 
+  - Input type for calculating text similarity
+  - 
+  - At present, two types of acquaintance are supported: file and list file
 
 Version history
-
-V0.1.0: initial version
-
-TFIDF only
-
-The amount of calculation is large
-
-V0.1.1: version modification
-
-V0.1.2: virus repair
-
-V0.1.3: detail modification
-
-V0.1.4: TF, IDF and TFIDF are completely disconnected
-
-V0.2.0: alpha version on GitHub
-
-Remove the redundant loops
-
-Using Python library function
-
-The calculation time is increased by 30 times
-
-V0.2.1: PIP preparation
-
-V0.2.2: virus repair
-
-V0.2.3: officially released on GitHub
-
-V0.3.0: PIP release
-
-V0.3.1: add readme on pip
-
-V0.3.2: readme adds download and usage instructions
-
-V0.3.3: modified on pip to allow users to use various functions directly
-
-V1.0.0: support text similarity calculation
-
-Support cosine similarity
-
-Cosine similarity: the cosine value of the angle between two vectors is calculated to evaluate their similarity
-
-Use- xs.cossim (Input1, Input2)
-
-V1.0.1: set is no longer used, because the order of the two texts will be different, resulting in a huge difference in the results (0.1 for the first time and 0.9 for the second time). The solution to the problem is to keep the order of dict at the beginning, so that there is no randomness in the calculation.
-
-V1.0.2: increase decimal precision calculation
-
-V1.0.3: added stoptext, previously missing
-
-V1.0.4: function automatically becomes PIP function
-
-V1.1.0: added dict2file function
-
-v1.2.0:
-
-Increase the speed version of acquaintance, only support cosine similarity and file type, but increase the speed by 10%
-
-V1.2.1: readme update, more comments
-
-V1.2.2: canceling decimal calculation is not different from reservation
-
-v1.3.0:
-
-Gitee (Chinese version of GitHub) is released to make domestic users more convenient to use
-
-Some cosine, TFIDF input into the class variable, making the call function more convenient
-
-V1.3.1: virus repair
-
-V1.3.2: support Tsinghua image, make it easier for domestic users to download
-
-V1.3.3 (v2.0.0 beta): v2.0.0 beta released on GitHub and gitee
-
-v2.0.0 Beta:
-
-Add simhash algorithm
-
-Simhash algorithm is suitable for large text analysis, and it is recommended to use more than 500 words
-
-Use- xs.simhash (Input1, Input2)
-
-Add minhash algorithm
-
-Minhash algorithm is similar to simhash.
-
-Use- xs.minhash (Input1, Input2)
+  - v0.1.0: initial version
+    - TFIDF only
+    - The amount of calculation is large
+  - v0.1.1: version modification
+  - v0.1.2: virus repair
+  - v0.1.3: detail modification
+  - v0.1.4: TF, IDF and TFIDF are completely disconnected
+  - v0.2.0: alpha version on GitHub
+    - Remove the redundant loops
+    - Using Python library function
+    - The calculation time is increased by 30 times
+  - v0.2.1: PIP preparation
+  - v0.2.2: virus repair
+  - v0.2.3: officially released on GitHub
+  - v0.3.0: PIP release
+  - v0.3.1: add readme on pip
+  - v0.3.2: readme adds download and usage instructions
+  - v0.3.3: modified on pip to allow users to use various functions directly
+  - v1.0.0: support text similarity calculation
+    - Support cosine similarity
+    - Cosine similarity: the cosine value of the angle between two vectors is calculated to evaluate  - their similarity
+    - Use - xs.cossim (Input1, Input2)
+  - V1.0.1: 
+    - Set is no longer used, because the order of the two texts will be different, resulting in   a huge differenve in the results (0.1 for the first time and 0.9 for the second time). 
+    - The solution to the problem is to keep the order of dict at the beginning, so that there is no randomness in the calculation.
+  - v1.0.2: increase decimal precision calculation
+  - v1.0.3: added stoptext, previously missing
+  - v1.0.4: function automatically becomes PIP function
+  - v1.1.0: added dict2file function
+  - v1.2.0:
+    - Increase the speed version of acquaintance, only support cosine similarity and file type, but increase the speed by 10%
+  - v1.2.1: readme update, more comments
+  - v1.2.2: canceling decimal calculation is not different from reservation
+  - v1.3.0:
+    - Gitee (Chinese version of GitHub) is released to make domestic users more convenient to use
+    - Some cosine, TFIDF input into the class variable, making the call function more convenient
+  - v1.3.1: virus repair
+  - v1.3.2: support Tsinghua image, make it easier for domestic users to download
+  - v1.3.3 (v2.0.0 beta): v2.0.0 beta released on GitHub and gitee
+  - v2.0.0:
+    - Add Simhash algorithm
+    - Simhash algorithm is suitable for large text analysis, and it is recommended to use more than 500 words
+      - Use - xs.simhash (Input1, Input2)
+    - Add Minhash algorithm
+    - Minhash algorithm is similar to Simhash.
+      - Use - xs.minhash (Input1, Input2)
 
 
 ### MIT License

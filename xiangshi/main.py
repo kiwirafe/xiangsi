@@ -2,21 +2,41 @@ import os
 import re
 import math
 import sys
+import logging
 import jieba
 import random
 import hashlib
 import binascii
+import time
 
+logging.getLogger('jieba').setLevel("INFO")
+logger = logging.getLogger('Xiangshi')
+logger.setLevel(logging.DEBUG)
+# Create file handler that logs debug and higher level messages
+fh = logging.FileHandler('xiangshi.log')
+fh.setLevel(logging.DEBUG)
+# Create console handler with a higher log level
+ch = logging.StreamHandler()
+ch.setLevel(logging.WARNING)
+# Create formatter and add it to the handlers
+formatter = logging.Formatter(
+    '%(name)s Log: %(asctime)s - %(levelname)s: %(message)s')
+ch.setFormatter(formatter)
+fh.setFormatter(formatter)
+# add the handlers to logger
+logger.addHandler(ch)
+logger.addHandler(fh)
 
 class calculator(object):
     def __init__(self):
+        logger.info("Starting up Xiangshi")
+        self.TFIDF = True
         self.UseLog = True
         self.FileDir = ""
         self.InputTarget = 0
         self.feature = 64
         self.HashNums = 16
         self.prime = 4294967311
-        self.MaxHash = 2**32 - 1
 
     def CheckInputType(self, input):
         if isinstance(input, str) == True:
@@ -45,7 +65,7 @@ class calculator(object):
         for key, value in result.items():
             f.write(str(key) + ": " + str(value) + "\n")
         f.close()
-        print("Result saved in", name)
+        logger.info("Result saved in" + name)
 
     def input2list(self, input):
         result = []
@@ -75,21 +95,22 @@ class calculator(object):
         h = hashlib.sha256(s.encode('utf-8'))
         return bin(int(h.hexdigest(), 16))[-self.feature:]
 
-    # Following h(x) = (a*x + b) % c
+    #公式 h(x) = (a*x + b) % c
     def HashAlg(self, k):
+        MaxHash = 2**32 - 1
         # Create a list of 'k' random values.
         RandomList = []
         
         while k > 0:
             # Get a random shingle ID.
             random.seed(k)
-            RandIndex = random.randint(0, self.MaxHash) 
+            RandIndex = random.randint(0, MaxHash) 
         
-            # Ensure that each random number is unique.
+            #确保数字唯一
             while RandIndex in RandomList:
-                RandIndex = random.randint(0, self.MaxHash) 
+                RandIndex = random.randint(0, MaxHash) 
             
-            # Add the random number to the list.
+            #Append值
             RandomList.append(RandIndex)
             k = k - 1
             
@@ -140,7 +161,7 @@ class calculator(object):
                     freq[word] += 1
 
         for word in freq:
-            #idf的公式
+            #IDF的公式
             TempIDF = total / (freq[word] + 1)
             if self.UseLog == True:
                 idf[word] = math.log(TempIDF)
@@ -149,7 +170,6 @@ class calculator(object):
         return idf
     
     def GetTFIDF(self, input):
-
         if self.CheckInputType(input) == "l":
             tf = self.GetTF(input[self.InputTarget])
             idf = self.GetIDF(input)
@@ -157,16 +177,21 @@ class calculator(object):
             tf = self.GetTF(input)
             idf = self.GetIDF(input)
         else:
-            raise Exception("Not appropriate InputTarget") 
+            raise Exception("Not appropriate input type") 
 
         result = {}
 
         for key, value in tf.items():
             result[key] = value * idf[key]
         
-        return result
+        if self.TFIDF == True:
+            return result
+        else:
+            return tf
 
     def cossim(self, input1, input2):
+        StartTime = time.time()
+        #取TFIDF值
         result = self.GetTFIDF(input1)
         result2 = self.GetTFIDF(input2)
 
@@ -178,12 +203,12 @@ class calculator(object):
         for i, x in enumerate(WordSet):
             WordDict[x] = i
 
-
         Result1Cut = [0] * len(WordDict)
+        Result2Cut = [0] * len(WordDict)
+
         for word in result.keys():
             Result1Cut[WordDict[word]] = result[word]
 
-        Result2Cut = [0] * len(WordDict)
         for word in result2.keys():
             Result2Cut[WordDict[word]] = result2[word]
 
@@ -196,15 +221,21 @@ class calculator(object):
             sq2 += pow(Result2Cut[i], 2)
 
         FinalResult = round(TopSum / (math.sqrt(sq1) * math.sqrt(sq2)), 4)
+        logger.info("Finished Cossim Calculations. Used %s seconds" % (time.time() - StartTime))
         return FinalResult
     
     def simhash(self, input1, input2):
-        TFIDFResult = self.SortDict(self.GetTFIDF(input1))
-        TFIDFResult2 = self.SortDict(self.GetTFIDF(input2))
+        StartTime = time.time()
+        TFIDFResult = self.GetTFIDF(input1)
+        TFIDFResult2 = self.GetTFIDF(input2)
+
+        TFIDFResult = self.SortDict(TFIDFResult)
+        TFIDFResult2 = self.SortDict(TFIDFResult2)
 
         FirstResults = {}
         FirstResults2 = {}
 
+        #取前feature个词
         i = 0
         for key, value in TFIDFResult.items():
             FirstResults[key] = value
@@ -226,8 +257,7 @@ class calculator(object):
         HashResults2 = {}
         
         for key, value in result.items():
-            HashResults[self.HashString(key)] = value
-        
+            HashResults[self.HashString(key)] = value    
         for key, value in result2.items():
             HashResults2[self.HashString(key)] = value
 
@@ -284,10 +314,12 @@ class calculator(object):
         for i, x in enumerate(FinalString):
             if x != FinalString2[i]:
                 hamming += 1
-        
+
+        logger.info("Finished Simhash Calculations. Used %s seconds" % (time.time() - StartTime))
         return 1 - hamming / self.feature
 
     def minhash(self, input1, input2):
+        StartTime = time.time()
         result = self.GetTFIDF(input1)
         result2 = self.GetTFIDF(input2)
 
@@ -295,8 +327,8 @@ class calculator(object):
         coeff1 = self.HashAlg(self.HashNums)
         coeff2 = self.HashAlg(self.HashNums)
 
-        signature = set()
-        signature2 = set()
+        signature = {}
+        signature2 = {}
 
         MinhashNum = self.prime
         MinhashNum2 = self.prime
@@ -309,7 +341,8 @@ class calculator(object):
                 if HashCode < MinhashNum:
                     MinhashNum = HashCode
                 
-                signature.add(MinhashNum)
+                if MinhashNum not in signature:
+                    signature[MinhashNum] = result[x]
 
             for y in result2.keys():
                 crc = binascii.crc32(y.encode('utf-8')) & 0xffffffff
@@ -317,12 +350,17 @@ class calculator(object):
                 if HashCode2 < MinhashNum2:
                     MinhashNum2 = HashCode2
                 
-                signature2.add(MinhashNum2)
-            
-        appear = 0
-        AllSignature = list(signature) + list(signature2)
-        for x in AllSignature:
-            if x in signature and x in signature2:
-                appear += 1
-            
-        return appear / len(AllSignature)
+                if MinhashNum2 not in signature2:
+                    signature2[MinhashNum2] = result2[y]
+        
+        intersect = 0
+        total = 0
+        if len(signature) != len(signature2):
+            logger.error("Signature unequal")
+        for x, y in signature.items():
+            if x in signature2:
+                intersect += y
+            total += y
+
+        logger.info("Finished Minhash Calculations. Used %s seconds" % (time.time() - StartTime))
+        return intersect / total

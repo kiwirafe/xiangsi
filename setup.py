@@ -1,11 +1,11 @@
 import setuptools
 
-with open("README.md", "r") as fh:
+with open("README.md", "r", encoding='utf-8') as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="xiangshi",
-    version="2.1.0",
+    version="2.3.1",
     author="kiwirafe",
     author_email="kiwirafe@gmail.com",
     description="中文文本相似度计算器 - 相识",

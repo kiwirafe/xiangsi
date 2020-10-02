@@ -3,7 +3,6 @@
 #### Chinese text similarity calculator
 
 Pypi Version Downloads Pypi and Github License Language
-
 [![Pypi Version](https://img.shields.io/pypi/v/xiangshi?label=Pypi%20Version)](https://img.shields.io/pypi/v/xiangshi)
 [![Downloads](https://pepy.tech/badge/xiangshi)](https://pepy.tech/project/xiangshi)
 [![Pypi and Github License](https://img.shields.io/pypi/l/xiangshi?label=Pypi%20and%20Github%20License)](https://img.shields.io/github/license/kiwirafe/xiangshi)

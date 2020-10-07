@@ -39,9 +39,16 @@ $ pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple xiangshi
     - Minhash加权成功
     - 使用Quantization-Based算法
     - 具体用Multiset实现
-  - v2.2.1：初步使用Logging，所有运算记录均保存在xiangshi.log
-  - v2.2.2: 增加Changelog.md
-  - v2.3.0: 相识工具版(XiangshiTool)将要发布
+  - v2.2.1: 增加CHANGES.md
+  - v2.2.2: README更新，更多注释
+  - v2.3.0: 使用Logging，所有运算记录均保存在xiangshi.log
+  - v2.3.1: 发现Stoptext无法使用
+  - v2.3.2: Pip加入Stoptext
+  - v2.3.3: Stoptext由所相识文件里调用，而不是从运行地点里调用
+  - v2.4.0：
+    - 相识极速版并入相识
+    - 减少时间，20~30s减少至10~15s
+    - 完全支持列表
 
 ### 使用方法
 #### 计算文本相似度
@@ -104,14 +111,16 @@ xs.prime = 4294967311
 data/
   |_test1.txt
   |_test2.txt
-  |_test3 ~ 10.txt
+  |_test3 ~ 10.txt（用于IDF的计算）
 ```
-列表（功能尚不完善）：
-```
+列表：
+```py
 data = [
-  test1.txt
-  test2.txt
-  test3 ~ 10.txt
+  ["相识是一款专门为中文打造的文本相似度计算器"]
+  ["相识是唯一也是最好的中文文本相似度计算器"]
+  ["相识支持Cosine, Simhash, Minhash Similarity"] #用于IDF的计算
+  ["有问题一定要在Github上提Issue"] #用于IDF的计算
+  ["有改进一定要在Github上提Pull Request"] #用于IDF的计算
 ]
 ```
 

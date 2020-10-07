@@ -10,8 +10,8 @@ import binascii
 import time
 
 logging.getLogger('jieba').setLevel("INFO")
-logger = logging.getLogger('Xiangshi')
-logger.setLevel(logging.DEBUG)
+OutsideLogger = logging.getLogger('Xiangshi')
+OutsideLogger.setLevel(logging.DEBUG)
 # Create file handler that logs debug and higher level messages
 fh = logging.FileHandler('xiangshi.log')
 fh.setLevel(logging.DEBUG)
@@ -24,12 +24,16 @@ formatter = logging.Formatter(
 ch.setFormatter(formatter)
 fh.setFormatter(formatter)
 # add the handlers to logger
-logger.addHandler(ch)
-logger.addHandler(fh)
+OutsideLogger.addHandler(ch)
+OutsideLogger.addHandler(fh)
+
 
 class calculator(object):
     def __init__(self):
-        logger.info("Starting up Xiangshi")
+        logging.getLogger('jieba').setLevel("INFO")
+        self.logger = OutsideLogger
+        self.logger.info("Starting up Xiangshi")
+        self.SysPath = os.path.dirname(os.path.abspath(__file__))
         self.TFIDF = True
         self.UseLog = True
         self.FileDir = ""
@@ -38,17 +42,10 @@ class calculator(object):
         self.HashNums = 16
         self.prime = 4294967311
 
-    def CheckInputType(self, input):
-        if isinstance(input, str) == True:
-            return "f"
-        elif isinstance(input, list) == True:
-            return "l"
-        else:
-            raise Exception("Only lists and files are supported by now.")
-
     #中文分词
     def SegDepart(self, sentence):
-        StopWords = [line.strip() for line in open("stoptext.txt", encoding='utf-8').readlines()]
+        StopWords = [line.strip() for line in open(self.SysPath + \
+            "/stoptext.txt", encoding='utf-8').readlines()]
         SentenceDepart = jieba.cut(sentence.strip())
 
         output = []
@@ -65,20 +62,16 @@ class calculator(object):
         for key, value in result.items():
             f.write(str(key) + ": " + str(value) + "\n")
         f.close()
-        logger.info("Result saved in" + name)
+        self.logger.info("Result saved in" + name)
 
     def input2list(self, input):
         result = []
-        
-        if self.CheckInputType(input) == "f":
-            try:
-                with open(input, encoding='utf-8') as f:
-                    corpus = f.read()
-            except:
-                with open(input, encoding='gbk') as f:
-                    corpus = f.read()
-        else:
-            corpus = "".join(input)
+        try:
+            with open(input, encoding='utf-8') as f:
+                corpus = f.read()
+        except:
+            with open(input, encoding='gbk') as f:
+                corpus = f.read()
 
         LineSplit = re.split(r'[。！；？，]', corpus.strip()) #按符号分句
 
@@ -86,6 +79,17 @@ class calculator(object):
             temp = self.SegDepart(line)
             result.extend(temp)
         return result
+
+    def dir2list(self, input):
+        files = {}
+        if self.FileDir == "":
+            TempDir = input.rsplit('/', 1)[0] + "/"
+        else:
+            TempDir = self.FileDir
+        for inputname in os.listdir(TempDir):
+            files[TempDir + inputname] = self.input2list(TempDir + inputname)
+
+        return files
 
     def SortDict(self, input):
         return dict(sorted(input.items(), \
@@ -117,8 +121,7 @@ class calculator(object):
         return RandomList
 
     #计算TF值 
-    def GetTF(self, input):
-        corpus = self.input2list(input)
+    def GetTF(self, corpus):
         tf = {}
         for x in corpus:
             tf[x] = corpus.count(x)
@@ -129,27 +132,13 @@ class calculator(object):
         return tf
 
     #计算IDF值
-    def GetIDF(self, input):
-        if self.CheckInputType(input) == "f":
-            corpus = self.input2list(input)
-        else:
-            corpus = input
-
+    def GetIDF(self, corpus, lists):
         freq = {}
         for x in corpus:
             freq[x] = 0
             
         idf = {}
-        FileLists = []
-        if self.CheckInputType(input) == "f":
-            if self.FileDir == "":
-                self.FileDir = input.rsplit('/', 1)[0] + "/"
-
-            for inputname in os.listdir(self.FileDir):
-                FileLists.append(self.input2list(self.FileDir + inputname))
-        
-        else:
-            FileLists = input
+        FileLists = list(lists.values())
         
         total = len(FileLists)
 
@@ -170,24 +159,23 @@ class calculator(object):
         return idf
     
     def GetTFIDF(self, input):
-        if self.CheckInputType(input) == "l":
+        if isinstance(input, list) == True:
             tf = self.GetTF(input[self.InputTarget])
-            idf = self.GetIDF(input)
-        elif self.CheckInputType(input) == "f":
-            tf = self.GetTF(input)
-            idf = self.GetIDF(input)
-        else:
-            raise Exception("Not appropriate input type") 
+            idf = self.GetIDF(input[self.InputTarget], input)
+        elif isinstance(input, str) == True:
+            files = self.dir2list(input)
+            tf = self.GetTF(files[input])
+            idf = self.GetIDF(files[input], files)
+
+        if self.TFIDF == False:
+            return tf
 
         result = {}
 
         for key, value in tf.items():
             result[key] = value * idf[key]
-        
-        if self.TFIDF == True:
-            return result
-        else:
-            return tf
+
+        return result
 
     def cossim(self, input1, input2):
         StartTime = time.time()
@@ -221,7 +209,7 @@ class calculator(object):
             sq2 += pow(Result2Cut[i], 2)
 
         FinalResult = round(TopSum / (math.sqrt(sq1) * math.sqrt(sq2)), 4)
-        logger.info("Finished Cossim Calculations. Used %s seconds" % (time.time() - StartTime))
+        self.logger.info("Finished Cossim Calculations. Used %s seconds" % (time.time() - StartTime))
         return FinalResult
     
     def simhash(self, input1, input2):
@@ -315,14 +303,13 @@ class calculator(object):
             if x != FinalString2[i]:
                 hamming += 1
 
-        logger.info("Finished Simhash Calculations. Used %s seconds" % (time.time() - StartTime))
+        self.logger.info("Finished Simhash Calculations. Used %s seconds" % (time.time() - StartTime))
         return 1 - hamming / self.feature
 
     def minhash(self, input1, input2):
         StartTime = time.time()
         result = self.GetTFIDF(input1)
         result2 = self.GetTFIDF(input2)
-
 
         coeff1 = self.HashAlg(self.HashNums)
         coeff2 = self.HashAlg(self.HashNums)
@@ -356,11 +343,11 @@ class calculator(object):
         intersect = 0
         total = 0
         if len(signature) != len(signature2):
-            logger.error("Signature unequal")
+            self.logger.error("Signature unequal")
         for x, y in signature.items():
             if x in signature2:
                 intersect += y
             total += y
 
-        logger.info("Finished Minhash Calculations. Used %s seconds" % (time.time() - StartTime))
+        self.logger.info("Finished Minhash Calculations. Used %s seconds" % (time.time() - StartTime))
         return intersect / total

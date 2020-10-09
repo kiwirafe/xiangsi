@@ -1,6 +1,6 @@
 # 相识(Xiangshi)
 
-#### 中文文本相似度计算器
+### 中文文本相似度计算器
 [![Pypi Version](https://img.shields.io/pypi/v/xiangshi?label=Pypi%20Version)](https://img.shields.io/pypi/v/xiangshi)
 [![Downloads](https://pepy.tech/badge/xiangshi)](https://pepy.tech/project/xiangshi)
 [![Pypi and Github License](https://img.shields.io/pypi/l/xiangshi?label=Pypi%20and%20Github%20License)](https://img.shields.io/github/license/kiwirafe/xiangshi)
@@ -21,7 +21,7 @@
   - 100%开源
   - 长期维护和更新
 
-### 下载与安装
+## 下载与安装
 Pip安装：
 ```sh
 $ pip3 install xiangshi
@@ -31,7 +31,7 @@ $ pip3 install xiangshi
 $ pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple xiangshi
 ```
 
-#### 版本v2.1.1~v2.3.0来了！
+### 版本v2.1.1~v2.3.0来了！
   - v2.1.1: 支持只有TF的加权
   - v2.1.2：Minhash加权选定用Quantization-Based来实现
   - v2.1.3: Minhash由set转为dict，与v1.0.1原因一样
@@ -50,14 +50,14 @@ $ pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple xiangshi
     - 减少时间，20~30s减少至10~15s
     - 完全支持列表
 
-### 使用方法
-#### 计算文本相似度
-##### 余弦相似度
+## 使用方法
+### 计算文本相似度
+#### 余弦相似度
 ```python
 import xiangshi as xs
 xs.cossim(Input1, Input2)
 ```
-##### Simhash & Minhash 相似度
+#### Simhash & Minhash 相似度
 ```python
 import xiangshi as xs
 # Simhash
@@ -69,12 +69,12 @@ xs.minhash(Input1, Input2)
  - Input1 - 第一个输入值，可以是文件的地址或是一个列表
  - Input2 - 第二个输入值，可以是文件的地址或是一个列表
 
-##### 计算TF，IDF，TFIDF
+#### 计算TF，IDF，TFIDF
 ```python
 import xiangshi as xs
 xs.GetTF(Input)
 xs.GetIDF(Input)
-xs.GetTFIDF（Input)
+xs.GetTFIDF(Input)
 ```
 #### 其他函数
 ```python
@@ -85,7 +85,7 @@ xs.SortDict(dict) #Dict排序
 xs.HashString(str) #哈希Str
 ```
 
-#### 修改默认函数
+### 修改默认函数
 ```python
 import xiangshi as xs
 xs.TFIDF = True 
@@ -104,7 +104,7 @@ xs.prime = 4294967311
 #计算Minhash时的最大哈希。默认值为4294967311
 ```
 
-##### 计算文本相似度的Input类型
+### 计算文本相似度的Input类型
 目前相识支持两种类型 - 文件和列表
 文件：
 ```
@@ -124,17 +124,15 @@ data = [
 ]
 ```
 
-### 其他链接：
+## 其他链接：
   - English Version of README.md:
   https://github.com/kiwirafe/xiangshi/blob/master/README(Eng).md
   - Change Log（没事就看一看）
-  https://github.com/kiwirafe/xiangshi/blob/master/Changelog.md
+  https://github.com/kiwirafe/xiangshi/blob/master/CHANGES.md
   - Pypi: 
   https://pypi.org/project/xiangshi/
   - Github:
   https://github.com/kiwirafe/xiangshi
-  - 相识极速版(XiangshiFast):
-  https://pypi.org/project/XiangshiFast/
   - 下载数量:
   https://pepy.tech/project/xiangshi
   - Gitee（中国开源）:
@@ -142,7 +140,7 @@ data = [
   - 清华镜像链接:
   https://pypi.tuna.tsinghua.edu.cn/simple/xiangshi/
 
-### 相识寓意
+## 相识寓意
 >与君初**相识**，
 犹如故人归。
 天涯明月新，
@@ -150,7 +148,7 @@ data = [
 
 ![Xiangshi](https://imgur.com/zoAnNfx.jpg)
 
-### MIT License
+## MIT License
 Copyright (c) [2020] [Kiwirafe]
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

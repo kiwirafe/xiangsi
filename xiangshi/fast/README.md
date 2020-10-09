@@ -35,7 +35,7 @@ Speed           | 10 ~ 15s     | 5 ~ 7s
 
 ### 下载与安装
 ```sh
-$ pip3 install XiangshiFast
+$ pip3 install xiangshi
 ```
 
 ### 使用方法

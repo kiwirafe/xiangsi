@@ -80,16 +80,39 @@ xs.GetTFIDF(Input)
 ```python
 import xiangshi as xs
 xs.input2list(Input) #分词
+xs.dir2list(dict) #Dir到List
 xs.dict2file(dict) #Dict到File
 xs.SortDict(dict) #Dict排序
-xs.HashString(str) #哈希Str
 ```
+
+### 相识极速版
+相识与极速版的比较：
+```
+Functions       | Xiangshi     | XiangshiFast 
+Cossim          | ✅           | ✅
+Simhash         | ✅           | ❌
+Minhash         | ✅           | ❌
+Ngram           | ✅           | ❌
+
+GetTF           | ✅           | ✅
+GetIDF          | ✅           | ✅
+GetTFIDF        | ✅           | ✅
+
+Stop Words      | ✅           | ✅
+input2list      | ✅           | ✅
+dict2file       | ✅           | ❌
+SortDict        | ✅           | ❌
+Logging         | ✅           | ❌
+
+File Input      | ✅           | ✅
+List Input      | ✅           | ❌
+String Input    | Projected    | ❌
+
+Speed           | 10 ~ 15s     | 5 ~ 7s
 
 ### 修改默认函数
 ```python
 import xiangshi as xs
-xs.TFIDF = True 
-#是否使用TFIDF，True是使用TFIDF，False是只是用TF。默认值为True
 xs.UseLog = True
 #计算TFIDF时是否使用log，True是使用，False是不使用。默认值为True
 xs.FileDir = ""

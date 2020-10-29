@@ -34,7 +34,7 @@ class calculator(object):
         self.logger = OutsideLogger
         self.logger.info("Starting up Xiangshi")
         self.SysPath = os.path.dirname(os.path.abspath(__file__))
-        self.TFIDF = True
+        self.weight = "TFIDF"
         self.UseLog = True
         self.FileDir = ""
         self.InputTarget = 0
@@ -166,9 +166,6 @@ class calculator(object):
             files = self.dir2list(input)
             tf = self.GetTF(files[input])
             idf = self.GetIDF(files[input], files)
-
-        if self.TFIDF == False:
-            return tf
 
         result = {}
 

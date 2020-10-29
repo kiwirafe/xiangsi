@@ -14,6 +14,7 @@ Functions       | Xiangshi     | XiangshiFast
 Cossim          | ✅           | ✅
 Simhash         | ✅           | ❌
 Minhash         | ✅           | ❌
+Ngram           | ✅           | ❌
 
 GetTF           | ✅           | ✅
 GetIDF          | ✅           | ✅
@@ -24,7 +25,6 @@ input2list      | ✅           | ✅
 dict2file       | ✅           | ❌
 SortDict        | ✅           | ❌
 Logging         | ✅           | ❌
-Choose TF/TFIDF | ✅           | ❌
 
 File Input      | ✅           | ✅
 List Input      | ✅           | ❌

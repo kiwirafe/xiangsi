@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="xiangshi",
-    version="2.4.0",
+    version="3.0.0b0",
     author="kiwirafe",
     author_email="kiwirafe@gmail.com",
     description="中文文本相似度计算器 - 相识",
@@ -24,7 +24,7 @@ setuptools.setup(
     package_data = {
         # If any package contains *.txt files, include them:
         "xiangshi": ["*.txt", "*.md", "xiangshi/*",],
-        "xiangshi.fast": ["*.txt", "*.md", "xiangshi/*"],
+        "xiangshi.fast": ["*.txt", "*.md",],
     },
     python_requires=">=3.4",
 )

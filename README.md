@@ -2,20 +2,21 @@
 
 ### 中文文本相似度计算器
 [![Pypi Version](https://img.shields.io/pypi/v/xiangshi?label=Pypi%20Version)](https://img.shields.io/pypi/v/xiangshi)
-[![Downloads](https://pepy.tech/badge/xiangshi)](https://pepy.tech/project/xiangshi)
+[![Pypi Downloads](https://static.pepy.tech/personalized-badge/xiangshi?period=total&units=international_system&left_color=grey&right_color=blue&left_text=Pypi%20Downloads)](https://pepy.tech/project/xiangshi)
 [![Pypi and Github License](https://img.shields.io/pypi/l/xiangshi?label=Pypi%20and%20Github%20License)](https://img.shields.io/github/license/kiwirafe/xiangshi)
 [![Language](https://img.shields.io/github/languages/top/kiwirafe/xiangshi)](https://github.com/kiwirafe/xiangshi)
 
-相识是一款专门为中文打造的文本相似度计算器。这是唯一也是最好的中文文本相似度计算器
+相识是一款专门为中文打造的文本相似度计算器。
+这是唯一也是最好的中文文本相似度计算器。
 
 相识的优势有：
   - 专攻中文文本相似度比较
-  - 使用余弦计算，Simhash和Minhash两种算法
+  - 支持余弦和N-gram算法
+  - 支持Simhash和Minhash算法
   - 100%Python语言
   - 自动TFIDF过滤
   - 可以单独计算TF和IDF
   - 支持List和File两种类型
-  - 支持多个文件相似度比较
   - 高效、迅速
   - 安装容易
   - 100%开源
@@ -31,24 +32,13 @@ $ pip3 install xiangshi
 $ pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple xiangshi
 ```
 
-### 版本v2.1.1~v2.3.0来了！
-  - v2.1.1: 支持只有TF的加权
-  - v2.1.2：Minhash加权选定用Quantization-Based来实现
-  - v2.1.3: Minhash由set转为dict，与v1.0.1原因一样
-  - v2.2.0：
-    - Minhash加权成功
-    - 使用Quantization-Based算法
-    - 具体用Multiset实现
-  - v2.2.1: 增加CHANGES.md
-  - v2.2.2: README更新，更多注释
-  - v2.3.0: 使用Logging，所有运算记录均保存在xiangshi.log
-  - v2.3.1: 发现Stoptext无法使用
-  - v2.3.2: Pip加入Stoptext
-  - v2.3.3: Stoptext由所相识文件里调用，而不是从运行地点里调用
-  - v2.4.0：
-    - 相识极速版并入相识
-    - 减少时间，20~30s减少至10~15s
-    - 完全支持列表
+### 版本v3.0.0来了！
+  - 减少时间，10-15s减少至0.1-3s
+  - 增加N-gram算法
+  - 增加Format
+  - 修改重要IDF Bug
+  - 增加Developement版本
+  - 修改Logging
 
 ## 使用方法
 ### 计算文本相似度
@@ -60,26 +50,52 @@ xs.cossim(Input1, Input2)
 #### Simhash & Minhash 相似度
 ```python
 import xiangshi as xs
-# Simhash
-xs.simhash(Input1, Input2)
-# Minhash
-xs.minhash(Input1, Input2)
+xs.simhash(Input1, Input2) # Simhash
+xs.minhash(Input1, Input2) # Minhash
 ```
  - 计算文本相似度时自动由TFIDF过滤
  - Input1 - 第一个输入值，可以是文件的地址或是一个列表
  - Input2 - 第二个输入值，可以是文件的地址或是一个列表
 
-#### 计算TF，IDF，TFIDF
+### 计算TF，IDF，TFIDF
 ```python
 import xiangshi as xs
 xs.GetTF(Input)
 xs.GetIDF(Input)
 xs.GetTFIDF(Input)
 ```
-#### 其他函数
+**相识自动从同一Folder里来计算IDF**，具体方法请到*计算文本相似度的Input类型*
+
+### 其它加权方法
+#### 
+```python
+from xiangshi import tfweight as xs #只有TF加权
+from xiangshi import noweight as xs #不加权
+# 其他使用一样
+```
+
+### 其他函数
 ```python
 import xiangshi as xs
 xs.input2list(Input) #分词
+<<<<<<< HEAD
+xs.dict2file(dict) #转换Dict到File，可以用来保存TFIDF
+xs.SortDict(dict) #Dict排序，可以用来给TFIDF排序
+xs.HashString(str) #哈希Str
+```
+
+### 修改默认值
+```python
+import xiangshi as xs
+# 以下所有的赋值均为默认值。
+xs.UseLog = True #计算TFIDF时是否使用log，True使用，False不使用。
+xs.FileDir = "" #计算IDF时其他文件的目录。
+xs.InputTarget = 0 #输入列表时指定计算的目标。
+xs.feature = 64 #计算Simhash时取前多少的TFIDF值。
+xs.HashNums = 16 #计算Minhash时算出多少个哈希值。
+xs.prime = 4294967311 #计算Minhash时的最大哈希。
+#xs.TFIDF = True 这个已不再使用，请到其它加权方法
+=======
 xs.dir2list(dict) #Dir到List
 xs.dict2file(dict) #Dict到File
 xs.SortDict(dict) #Dict排序
@@ -125,6 +141,7 @@ xs.HashNums = 16
 #计算Minhash时算出多少个哈希值。默认值为16
 xs.prime = 4294967311
 #计算Minhash时的最大哈希。默认值为4294967311
+>>>>>>> e97ffbae5c3dbae9a07393eba0bfd095d292b62a
 ```
 
 ### 计算文本相似度的Input类型
@@ -134,7 +151,7 @@ xs.prime = 4294967311
 data/
   |_test1.txt
   |_test2.txt
-  |_test3 ~ 10.txt（用于IDF的计算）
+  |_test3 ~ 10.txt（自动用于IDF的计算）
 ```
 列表：
 ```py
@@ -146,6 +163,41 @@ data = [
   ["有改进一定要在Github上提Pull Request"] #用于IDF的计算
 ]
 ```
+**相识自动从同一Folder里所有支持的文件类型来计算IDF**
+如果需要设定，使用：
+```python
+xs.FileDir = ""
+```
+侧可在想要的Folder里的计算IDF
+
+### 计算文件的类型
+目前相识默认有**两种文件**类型来计算IDF：
+```
+.doc
+.txt
+```
+如果需要增加，请**先用Python自己试验一下**，是否能读取所想要的结果，
+不然读取的话全是乱码。
+测试代码如下：
+```python
+f = open("file.xlsx", "r", encoding="utf-8") 
+# Encoding需要自己调试，中文常用的有：
+# utf-8, gbk, gbk2312, gbk18030
+print(f)
+```
+#### 增加 & 删除
+```python
+from xiangshi import formats
+formats.AppendFormat(".xlsx") #增加
+formats.RemoveFormat(".xlsx") #删除
+```
+
+### Development
+这里是给二次开发者使用的，目前只支持余弦相似度。
+```python
+from xiangshi import dev as xs
+```
+使用方法请自己看源代码
 
 ## 其他链接：
   - English Version of README.md:
@@ -160,8 +212,6 @@ data = [
   https://pepy.tech/project/xiangshi
   - Gitee（中国开源）:
   https://gitee.com/kiwirafe/xiangshi
-  - 清华镜像链接:
-  https://pypi.tuna.tsinghua.edu.cn/simple/xiangshi/
 
 ## 相识寓意
 >与君初**相识**，

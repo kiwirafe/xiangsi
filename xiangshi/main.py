@@ -1,35 +1,29 @@
-import os
-import re
 import math
 import sys
 import logging
-import jieba
-import random
 import hashlib
 import binascii
 import time
+import func
 
-logging.getLogger('jieba').setLevel("INFO")
-OutsideLogger = logging.getLogger('Xiangshi')
-OutsideLogger.setLevel(logging.DEBUG)
-# Create file handler that logs debug and higher level messages
-fh = logging.FileHandler('xiangshi.log')
-fh.setLevel(logging.DEBUG)
-# Create console handler with a higher log level
-ch = logging.StreamHandler()
-ch.setLevel(logging.WARNING)
-# Create formatter and add it to the handlers
-formatter = logging.Formatter(
-    '%(name)s Log: %(asctime)s - %(levelname)s: %(message)s')
-ch.setFormatter(formatter)
-fh.setFormatter(formatter)
-# add the handlers to logger
-OutsideLogger.addHandler(ch)
-OutsideLogger.addHandler(fh)
+funcs = func.functions
 
+logging.getLogger("jieba").disabled = True
 
-class calculator(object):
+try:
+    logging.basicConfig(filename="xiangshi.log",
+    filemode='a',
+    format='%(name)s Log - %(asctime)s - %(levelname)s %(message)s',
+    datefmt='%D, %H:%M:%S',
+    level=logging.DEBUG)
+except PermissionError:
+    logging.info("No Permission")
+
+class calculator(funcs):
     def __init__(self):
+<<<<<<< HEAD
+        super(calculator, self).__init__()
+=======
         logging.getLogger('jieba').setLevel("INFO")
         self.logger = OutsideLogger
         self.logger.info("Starting up Xiangshi")
@@ -38,10 +32,13 @@ class calculator(object):
         self.UseLog = True
         self.FileDir = ""
         self.InputTarget = 0
+>>>>>>> e97ffbae5c3dbae9a07393eba0bfd095d292b62a
         self.feature = 64
         self.HashNums = 16
         self.prime = 4294967311
 
+<<<<<<< HEAD
+=======
     #中文分词
     def SegDepart(self, sentence):
         StopWords = [line.strip() for line in open(self.SysPath + \
@@ -174,69 +171,76 @@ class calculator(object):
 
         return result
 
+>>>>>>> e97ffbae5c3dbae9a07393eba0bfd095d292b62a
     def cossim(self, input1, input2):
-        StartTime = time.time()
-        #取TFIDF值
+        # 取TFIDF值
         result = self.GetTFIDF(input1)
         result2 = self.GetTFIDF(input2)
 
+        # Merge两个Result
         merge = result.copy()
         merge.update(result2)
-        WordSet = list(dict.fromkeys(merge.keys()))
-        WordDict = {}
+        WordSet = list(merge.keys())
 
+        # 做一个Dict，每个词标上顺序
+        WordDict = {}
         for i, x in enumerate(WordSet):
             WordDict[x] = i
 
+        # 做两个List，目前全为0
         Result1Cut = [0] * len(WordDict)
         Result2Cut = [0] * len(WordDict)
 
+        # 如果出现的话就为加权值，不出现的话为0
         for word in result.keys():
             Result1Cut[WordDict[word]] = result[word]
 
         for word in result2.keys():
             Result2Cut[WordDict[word]] = result2[word]
 
+        # 欧几里得距离
         TopSum = 0
         sq1 = 0
         sq2 = 0
-        for i in range(len(result)):
+        for i in range(len(Result1Cut)):
             TopSum += Result1Cut[i] * Result2Cut[i]
             sq1 += pow(Result1Cut[i], 2)
             sq2 += pow(Result2Cut[i], 2)
 
-        FinalResult = round(TopSum / (math.sqrt(sq1) * math.sqrt(sq2)), 4)
-        self.logger.info("Finished Cossim Calculations. Used %s seconds" % (time.time() - StartTime))
+        # 余弦相似度
+        try:
+            FinalResult = TopSum / (math.sqrt(sq1) * math.sqrt(sq2))
+        except ZeroDivisionError:
+            FinalResult = 0.0
+
+        FinalResult = round(FinalResult, 12)
         return FinalResult
     
+    def ngram(self, input1, input2, num=2):
+        result = [] 
+        for i in range(len(input1) - num + 1):
+            result.append(input1[i:i + num]) 
+
+        result2 = [] 
+        for i in range(len(input2) - num + 1):
+            result2.append(input2[i:i + num]) 
+
+        cnt = 0 
+        for i in result:
+            for j in result2:
+                if i == j:
+                    cnt += 1
+
+        return (cnt / len(result) + cnt / len(result2)) / 2
+
     def simhash(self, input1, input2):
-        StartTime = time.time()
-        TFIDFResult = self.GetTFIDF(input1)
-        TFIDFResult2 = self.GetTFIDF(input2)
+        TFIDFResult = self.SortDict(self.GetTFIDF(input1))
+        TFIDFResult2 = self.SortDict(self.GetTFIDF(input2))
 
-        TFIDFResult = self.SortDict(TFIDFResult)
-        TFIDFResult2 = self.SortDict(TFIDFResult2)
+        # 取前feature个词
+        result = {k: TFIDFResult[k] for k in list(TFIDFResult)[:self.feature]}
+        result2 = {k: TFIDFResult2[k] for k in list(TFIDFResult2)[:self.feature]}
 
-        FirstResults = {}
-        FirstResults2 = {}
-
-        #取前feature个词
-        i = 0
-        for key, value in TFIDFResult.items():
-            FirstResults[key] = value
-            i += 1
-            if i >= self.feature:
-                break
-
-        i = 0
-        for key, value in TFIDFResult2.items():
-            FirstResults2[key] = value
-            i += 1
-            if i >= self.feature:
-                break
-
-        result = FirstResults
-        result2 = FirstResults2
 
         HashResults = {}
         HashResults2 = {}
@@ -300,11 +304,9 @@ class calculator(object):
             if x != FinalString2[i]:
                 hamming += 1
 
-        self.logger.info("Finished Simhash Calculations. Used %s seconds" % (time.time() - StartTime))
         return 1 - hamming / self.feature
 
     def minhash(self, input1, input2):
-        StartTime = time.time()
         result = self.GetTFIDF(input1)
         result2 = self.GetTFIDF(input2)
 
@@ -319,9 +321,9 @@ class calculator(object):
         for i in range(0, self.HashNums):
             for x in result.keys():
                 crc = binascii.crc32(x.encode('utf-8')) & 0xffffffff
-                #Generating Hash
+                # Generating Hash
                 HashCode = (coeff1[i] * crc + coeff2[i]) % self.prime
-                # Track the lowest hash code seen.
+                #  Track the lowest hash code seen.
                 if HashCode < MinhashNum:
                     MinhashNum = HashCode
                 
@@ -339,12 +341,10 @@ class calculator(object):
         
         intersect = 0
         total = 0
-        if len(signature) != len(signature2):
-            self.logger.error("Signature unequal")
         for x, y in signature.items():
             if x in signature2:
                 intersect += y
             total += y
 
-        self.logger.info("Finished Minhash Calculations. Used %s seconds" % (time.time() - StartTime))
         return intersect / total
+

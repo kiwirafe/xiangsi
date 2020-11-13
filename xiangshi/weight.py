@@ -1,4 +1,17 @@
 import os
+<<<<<<< HEAD
+import logging
+import time
+import main2
+
+cal = main2.calculator
+
+class calculator(cal):
+    def __init__(self):
+        super(calculator, self).__init__()
+        self.logger.info("Starting up Xiangshi Weight")
+        self.weight = None
+=======
 import re
 import math
 import sys
@@ -119,6 +132,7 @@ class calculator(object):
             k = k - 1
             
         return RandomList
+>>>>>>> e97ffbae5c3dbae9a07393eba0bfd095d292b62a
 
     #计算TF值 
     def GetTF(self, corpus):
@@ -142,6 +156,11 @@ class calculator(object):
             tf = self.GetTF(input[self.InputTarget])
             one = self.Get1(input[self.InputTarget])
         elif isinstance(input, str) == True:
+<<<<<<< HEAD
+            if os.path.isfile(input) != True:
+                raise Exception("Wrong File")
+=======
+>>>>>>> e97ffbae5c3dbae9a07393eba0bfd095d292b62a
             files = self.dir2list(input)
             tf = self.GetTF(files[input])
             one = self.Get1(files[input])
@@ -152,6 +171,13 @@ class calculator(object):
             return one
         else:
             raise Exception("self.weight can onle be set as \"TF\" or None")
+<<<<<<< HEAD
+
+xs = calculator()
+print(xs.cossim("data/test1.txt", "data/test2.txt"))
+xs.weight = "TF"
+print(xs.cossim("data/test1.txt", "data/test2.txt"))
+=======
         
 
     def cossim(self, input1, input2):
@@ -332,3 +358,4 @@ class calculator(object):
             total += 1
 
         return intersect / total
+>>>>>>> e97ffbae5c3dbae9a07393eba0bfd095d292b62a

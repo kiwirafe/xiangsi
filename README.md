@@ -78,53 +78,10 @@ from xiangshi import noweight as xs #不加权
 ```python
 import xiangshi as xs
 xs.input2list(Input) #分词
-<<<<<<< HEAD
-xs.dict2file(dict) #转换Dict到File，可以用来保存TFIDF
-xs.SortDict(dict) #Dict排序，可以用来给TFIDF排序
-xs.HashString(str) #哈希Str
-```
-
-### 修改默认值
-```python
-import xiangshi as xs
-# 以下所有的赋值均为默认值。
-xs.UseLog = True #计算TFIDF时是否使用log，True使用，False不使用。
-xs.FileDir = "" #计算IDF时其他文件的目录。
-xs.InputTarget = 0 #输入列表时指定计算的目标。
-xs.feature = 64 #计算Simhash时取前多少的TFIDF值。
-xs.HashNums = 16 #计算Minhash时算出多少个哈希值。
-xs.prime = 4294967311 #计算Minhash时的最大哈希。
-#xs.TFIDF = True 这个已不再使用，请到其它加权方法
-=======
 xs.dir2list(dict) #Dir到List
 xs.dict2file(dict) #Dict到File
 xs.SortDict(dict) #Dict排序
 ```
-
-### 相识极速版
-相识与极速版的比较：
-```
-Functions       | Xiangshi     | XiangshiFast 
-Cossim          | ✅           | ✅
-Simhash         | ✅           | ❌
-Minhash         | ✅           | ❌
-Ngram           | ✅           | ❌
-
-GetTF           | ✅           | ✅
-GetIDF          | ✅           | ✅
-GetTFIDF        | ✅           | ✅
-
-Stop Words      | ✅           | ✅
-input2list      | ✅           | ✅
-dict2file       | ✅           | ❌
-SortDict        | ✅           | ❌
-Logging         | ✅           | ❌
-
-File Input      | ✅           | ✅
-List Input      | ✅           | ❌
-String Input    | Projected    | ❌
-
-Speed           | 10 ~ 15s     | 5 ~ 7s
 
 ### 修改默认函数
 ```python
@@ -141,7 +98,6 @@ xs.HashNums = 16
 #计算Minhash时算出多少个哈希值。默认值为16
 xs.prime = 4294967311
 #计算Minhash时的最大哈希。默认值为4294967311
->>>>>>> e97ffbae5c3dbae9a07393eba0bfd095d292b62a
 ```
 
 ### 计算文本相似度的Input类型

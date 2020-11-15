@@ -1,13 +1,13 @@
 from .main import calculator
 from .formats import FormatFuncs as fmt
-from development import calculator as dev
+from .development import calculator as dev
 from .weight import calculator as ext
 
-calculator = calculator()
+cal = calculator()
 
-cossim = calculator.cossim
-minhash = calculator.minhash
-simhash = calculator.simhash
+cossim = cal.cossim
+minhash = cal.minhash
+simhash = cal.simhash
 
 noweight = ext()
 noweight.weight = None

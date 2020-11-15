@@ -6,9 +6,10 @@ import logging
 import jieba
 import random
 import time
-import formats
+from . import formats
 
-FormatList = formats.FormatList
+FormatClass = formats.FormatFuncs()
+FormatList = FormatClass.FormatList
 
 class calculator(object):
     def __init__(self):
@@ -229,5 +230,5 @@ sim = calculator()
 #是否用Log，，默认值True
 #sim.UseLog = True / False
 
-res = sim.cossim("NoDupData/text1.txt", "NoDupData/text10.txt")
-print(res)
+#res = sim.cossim("NoDupData/text1.txt", "NoDupData/text10.txt")
+#print(res)

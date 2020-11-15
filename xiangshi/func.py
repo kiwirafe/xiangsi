@@ -6,13 +6,13 @@ import logging
 import jieba
 import random
 import hashlib
-import formats
-import CacheFile
+from . import formats
+from . import CacheFile
 import importlib
 import time
 
-FormatList = formats.FormatList
-
+FormatClass = formats.FormatFuncs()
+FormatList = FormatClass.FormatList
 
 class functions(object):
     def __init__(self):
@@ -67,7 +67,7 @@ class functions(object):
         importlib.reload(CacheFile)
         files = {}
         if input.count("/") > 0:
-            TempDir = self.FileDir or input.rsplit("/")[0] + "/"
+            TempDir = self.FileDir or input[:input.rfind("/") + 1]
         else:
             TempDir = "./"
         for inputname in os.listdir(TempDir):
@@ -114,12 +114,18 @@ class functions(object):
         return RandomList
     
     def cache(self, input, tfidf):
-        s = open("CacheFile.py", "r", encoding="utf-8").read().split(" #  End")
-        f = open("CacheFile.py", "w", encoding="utf-8")
+        try:
+            logging.critical(self.SysPath)
+        except:
+            self.SysPath = "\\".join(os.path.dirname(os.path.abspath(__file__)) \
+                .split("/"))
+        TempPath = str(self.SysPath) + "/CacheFile.py"
+        s = open(TempPath, "r", encoding="utf-8").read().split(" # End")
+        f = open(TempPath, "w", encoding="utf-8")
         s[0] = s[0][:-1]
         f.write(s[0] + "\t" + "\"" + input + "\"" + ": ")
         f.write(str(tfidf) + ",\n")
-        f.write("} #  End" + s[1])
+        f.write("} # End" + s[1])
         f.close()
 
     # 计算TF值 
@@ -163,6 +169,7 @@ class functions(object):
             if os.path.isfile(input) is not True:
                 raise Exception("Wrong File: " + input)
             files = self.dir2list(input)
+
             tf = self.GetTF(files[input])
             idf = self.GetIDF(files[input], files)
             

@@ -4,7 +4,7 @@ import logging
 import hashlib
 import binascii
 import time
-import func
+from . import func
 
 funcs = func.functions
 

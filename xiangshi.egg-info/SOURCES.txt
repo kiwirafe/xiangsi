@@ -1,0 +1,16 @@
+README.md
+setup.py
+xiangshi/CacheFile.py
+xiangshi/__init__.py
+xiangshi/development.py
+xiangshi/fast.py
+xiangshi/formats.py
+xiangshi/func.py
+xiangshi/main.py
+xiangshi/stoptext.txt
+xiangshi/weight.py
+xiangshi.egg-info/PKG-INFO
+xiangshi.egg-info/SOURCES.txt
+xiangshi.egg-info/dependency_links.txt
+xiangshi.egg-info/requires.txt
+xiangshi.egg-info/top_level.txt

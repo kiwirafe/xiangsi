@@ -40,6 +40,10 @@ $ pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple xiangshi
   - 增加Developement版本
   - 修改Logging
 
+  版本v3.0.1:
+  - 修复List输入
+  - 暂时删除Fast版本（速度并不如相识）
+
 ## 使用方法
 ### 计算文本相似度
 #### 余弦相似度
@@ -105,18 +109,14 @@ xs.prime = 4294967311
 文件：
 ```
 data/
-  |_test1.txt
-  |_test2.txt
-  |_test3 ~ 10.txt（自动用于IDF的计算）
+  |_input1.txt
+  |_input2.txt
+  |_Other Files 3 ~ 10.txt（自动用于IDF的计算）
 ```
 列表：
 ```py
-data = [
-  ["相识是一款专门为中文打造的文本相似度计算器"]
-  ["相识是唯一也是最好的中文文本相似度计算器"]
-  ["相识支持Cosine, Simhash, Minhash Similarity"] #用于IDF的计算
-  ["有问题一定要在Github上提Issue"] #用于IDF的计算
-  ["有改进一定要在Github上提Pull Request"] #用于IDF的计算
+input1 = ["相识是一款专门为中文打造的文本相似度计算器"]
+input2 = ["相识是唯一也是最好的中文文本相似度计算器"]
 ]
 ```
 **相识自动从同一Folder里所有支持的文件类型来计算IDF**

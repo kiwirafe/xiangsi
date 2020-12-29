@@ -78,9 +78,11 @@ files = self.dir2list(input)
 tf = self.GetTF(files[input])
 idf = self.GetIDF(files[input], files.values())
 ```
-TF输入值：`corpus`
-IDF第一个输入值：`corpus`
+
+TF输入值：`corpus`  
+IDF第一个输入值：`corpus`  
 IDF第二个输入值：`list of corpus`
+
 **相识自动从同一Folder里来计算IDF**，具体方法请到<计算文本相似度的Input类型>
 
 ### 其它加权方法
@@ -130,7 +132,6 @@ data/
 ```py
 input1 = ["相识是一款专门为中文打造的文本相似度计算器"]
 input2 = ["相识是唯一也是最好的中文文本相似度计算器"]
-]
 ```
 **相识自动从同一Folder里所有支持的文件类型来计算IDF**
 如果需要设定Folder，使用：

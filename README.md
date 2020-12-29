@@ -61,14 +61,27 @@ xs.minhash(Input1, Input2) # Minhash
  - Input1 - 第一个输入值，可以是文件的地址或是一个列表
  - Input2 - 第二个输入值，可以是文件的地址或是一个列表
 
-### 计算TF，IDF，TFIDF
+### 计算TFIDF：
 ```python
 import xiangshi as xs
-xs.GetTF(Input)
-xs.GetIDF(Input)
-xs.GetTFIDF(Input)
+xs.TFIDF(Input)
 ```
-**相识自动从同一Folder里来计算IDF**，具体方法请到*计算文本相似度的Input类型*
+
+### 计算TF，IDF
+```python
+import xiangshi as xs
+# 如果是列表：
+tf = self.GetTF(input[0])
+idf = self.GetIDF(input[0], input)
+# 如果是文档：
+files = self.dir2list(input)
+tf = self.GetTF(files[input])
+idf = self.GetIDF(files[input], files.values())
+```
+TF输入值：`corpus`
+IDF第一个输入值：`corpus`
+IDF第二个输入值：`list of corpus`
+**相识自动从同一Folder里来计算IDF**，具体方法请到<计算文本相似度的Input类型>
 
 ### 其它加权方法
 #### 
@@ -120,11 +133,11 @@ input2 = ["相识是唯一也是最好的中文文本相似度计算器"]
 ]
 ```
 **相识自动从同一Folder里所有支持的文件类型来计算IDF**
-如果需要设定，使用：
+如果需要设定Folder，使用：
 ```python
 xs.FileDir = ""
 ```
-侧可在想要的Folder里的计算IDF
+就可在想要的Folder里的计算IDF
 
 ### 计算文件的类型
 目前相识默认有**两种文件**类型来计算IDF：

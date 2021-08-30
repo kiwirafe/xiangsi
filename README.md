@@ -9,6 +9,9 @@
 相识是一款专门为中文打造的文本相似度计算器。
 这是唯一也是最好的中文文本相似度计算器。
 
+## [在线计算文本相似度](https://https://xs.datavisdev.com)
+## [English Version of README](https://github.com/kiwirafe/xiangshi/blob/master/README(Eng).md)
+
 相识的优势有：
   - 专攻中文文本相似度比较
   - 支持余弦和N-gram算法
@@ -32,17 +35,8 @@ $ pip3 install xiangshi
 $ pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple xiangshi
 ```
 
-### 版本v3.0.0来了！
-  - 减少时间，10-15s减少至0.1-3s
-  - 增加N-gram算法
-  - 增加Format
-  - 修改重要IDF Bug
-  - 增加Developement版本
-  - 修改Logging
-
-  版本v3.0.1:
-  - 修复List输入
-  - 暂时删除Fast版本（速度并不如相识）
+### 版本v4.0.0即将到来
+#### 将支持Kmeans文本聚类
 
 ## 使用方法
 ### 计算文本相似度
@@ -126,7 +120,9 @@ xs.prime = 4294967311
 data/
   |_input1.txt
   |_input2.txt
-  |_Other Files 3 ~ 10.txt（自动用于IDF的计算）
+  |_input3.txt（自动用于IDF的计算）
+  |_input4.txt（自动用于IDF的计算）
+  |_input5.txt（自动用于IDF的计算）
 ```
 列表：
 ```py

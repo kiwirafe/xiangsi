@@ -9,8 +9,8 @@
 相识是一款专门为中文打造的文本相似度计算器。
 这是唯一也是最好的中文文本相似度计算器。
 
-## [在线计算文本相似度](https://https://xs.datavisdev.com)
-## [English Version of README](https://github.com/kiwirafe/xiangshi/blob/master/README(Eng).md)
+### [在线计算文本相似度](https://https://xs.datavisdev.com)
+### [English Version of README](https://github.com/kiwirafe/xiangshi/blob/master/README(Eng).md)
 
 相识的优势有：
   - 专攻中文文本相似度比较

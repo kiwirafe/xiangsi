@@ -1,15 +1,9 @@
 import os
 import re
 import math
-import sys
 import logging
 import jieba
 import random
-import time
-from . import formats
-
-FormatClass = formats.FormatFuncs()
-FormatList = FormatClass.FormatList
 
 class calculator(object):
     def __init__(self):
@@ -68,7 +62,7 @@ class calculator(object):
         files = {}
         TempDir = self.FileDir
         for inputname in os.listdir(TempDir):
-            if inputname.endswith(tuple(FormatList)):
+            if inputname.endswith(".txt"):
                 files[TempDir + inputname] = self.input2list(TempDir + inputname)
             else:
                 logging.debug("File Format Not Supported: " + inputname)

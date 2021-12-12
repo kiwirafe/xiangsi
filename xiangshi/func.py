@@ -1,106 +1,95 @@
 import os
-import re
 import math
-import sys
 import logging
 import jieba
 import random
 import hashlib
-from . import formats
-from . import CacheFile
-import importlib
-import time
-
-FormatClass = formats.FormatFuncs()
-FormatList = FormatClass.FormatList
+import codecs
+import pickle
+from .stoptext import StopWords
 
 class functions(object):
     def __init__(self):
         self.SysPath = os.path.dirname(os.path.abspath(__file__))
         self.UseLog = True
-        self.FileDir = ""
-        self.InputTarget = 0
 
     # 中文分词
     def SegDepart(self, sentence):
-        StopWords = [line.strip() for line in open(self.SysPath + \
-            "/stoptext.txt", encoding='utf-8').readlines()]
-        SentenceDepart = jieba.cut(sentence.strip())
-        output = []
-        for word in SentenceDepart:
-            if word not in StopWords:
-                if word != '\n' and word != ' ':
-                    output.append(word)
+        try:
+            cached = pickle.load(open('cache', 'rb'))
+        except:
+            cached = {}
 
+        hashed = self.HashString(sentence)
+        if hashed not in cached:
+            cache = open('cache', 'wb')
+            SentenceDepart = jieba.lcut(sentence.strip())
+            output = []
+            for word in SentenceDepart:
+                if word not in StopWords:
+                    output.append(word)
+            cached[hashed] = output
+            if len(cached) > 50:
+                cached.pop(next(iter(cached)))
+            pickle.dump(cached, cache)
+            cache.close()
+        else:
+            output = cached[hashed]
+        
         return output
+    
+    def file2list(self, input1, input2, EncodeArg="utf-8"):
+        if os.path.isfile(input1) is not True:
+            raise Exception("Wrong File: " + input1)
+        #return files
+        elif os.path.isfile(input2) is not True:
+            raise Exception("Wrong File: " + input2)
+    
+        files = []
+        TempDir = os.path.dirname(input1) or "."
+        TempDir += "/"
+
+        for inputname in os.listdir(TempDir):
+            TempName = TempDir + inputname
+            if inputname == input1:
+                files.insert(0, TempName)
+            elif inputname == input2:
+                files.insert(1, TempName)
+
+            if inputname.endswith(".txt"):
+                with open(TempName, encoding=EncodeArg) as f:
+                    corpus = f.read()
+                files.append(corpus)
+            else:
+                logging.debug("File Format Not Supported: " + inputname)
+
+        return files
 
     def dict2file(self, result, name="result.txt"):
         open(name, "w").close()
-        f = open(name, "a")
+        f = codecs.open(name, "a", "utf-8")
         
         for key, value in result.items():
             f.write(str(key) + ": " + str(value) + "\n")
         f.close()
-        self.logger.info("Result saved in" + name)
-
-    def input2list(self, input):
-        result = []
-        try:
-            try:
-                with open(input, encoding='utf-8') as f:
-                    corpus = f.read()
-            except UnicodeDecodeError:
-                with open(input, encoding='gb18030') as f:
-                    corpus = f.read()
-        except UnicodeDecodeError:
-            with open(input, encoding='gbk') as f:
-                corpus = f.read()
-
-        LineSplit = re.split(r'[。，；！？]', corpus.strip()) # 按符号分句
-
-        for line in LineSplit:
-            temp = self.SegDepart(line)
-            result.extend(temp)
-        return result
-
-    def dir2list(self, input):
-        importlib.reload(CacheFile)
-        files = {}
-        if input.count("/") > 0:
-            TempDir = self.FileDir or input[:input.rfind("/") + 1]
-        else:
-            TempDir = "./"
-        for inputname in os.listdir(TempDir):
-            TempName = TempDir + inputname
-            if TempName in CacheFile.tfidfs:
-                files[TempName] = CacheFile.tfidfs[TempName]
-            else:
-                if inputname.endswith(tuple(FormatList)):
-                    listed = self.input2list(TempName)
-                    files[TempName] = listed
-                    self.cache(TempName, listed)
-                else:
-                    logging.debug("File Format Not Supported: " + inputname)
-
-        return files
+        logging.info("Result saved in" + name)
 
     def SortDict(self, input):
         return dict(sorted(input.items(), \
             key=lambda kv: kv[1], reverse=True))
 
     def HashString(self, s):
-        h = hashlib.sha256(s.encode('utf-8'))
-        return bin(int(h.hexdigest(), 16))[-self.feature:]
+        return hashlib.sha256(s.encode('utf-8')).hexdigest()
 
     # 公式 h(x) = (a*x + b) % c
     def HashAlg(self, k):
         MaxHash = 2**32 - 1
-        #  Create a list of 'k' random values.
+        # Create a list of 'k' random values.
         RandomList = []
         
         while k > 0:
-            #  Get a random shingle ID.
             random.seed(k)
+            # Get a random shingle ID.
             RandIndex = random.randint(0, MaxHash) 
         
             # 确保数字唯一
@@ -112,21 +101,12 @@ class functions(object):
             k = k - 1
             
         return RandomList
-    
-    def cache(self, input, tfidf):
-        try:
-            logging.critical(self.SysPath)
-        except:
-            self.SysPath = "\\".join(os.path.dirname(os.path.abspath(__file__)) \
-                .split("/"))
-        TempPath = str(self.SysPath) + "/CacheFile.py"
-        s = open(TempPath, "r", encoding="utf-8").read().split(" # End")
-        f = open(TempPath, "w", encoding="utf-8")
-        s[0] = s[0][:-1]
-        f.write(s[0] + "\t" + "\"" + input + "\"" + ": ")
-        f.write(str(tfidf) + ",\n")
-        f.write("} # End" + s[1])
-        f.close()
+
+    def Get1(self, corpus):
+        one = {}
+        for x in corpus:
+            one[x] = 1
+        return one
 
     # 计算TF值 
     def GetTF(self, corpus):
@@ -148,9 +128,8 @@ class functions(object):
         # 对于文档中的每个词，统计其在文档中的出现频率
         for word in corpus:
             if freq[word] == 0:
-                for filel in lists:
-                    if word in filel:
-                        freq[word] += 1
+                if word in lists:
+                    freq[word] += 1
 
         for word in freq:
             # IDF的公式
@@ -161,17 +140,15 @@ class functions(object):
                 idf[word] = TempIDF
         return idf
 
-    def GetTFIDF(self, input):
-        if isinstance(input, list) is True:
-            tf = self.GetTF(input[self.InputTarget])
-            idf = self.GetIDF(input[self.InputTarget], input)
-        elif isinstance(input, str) is True:
-            if os.path.isfile(input) is not True:
-                raise Exception("Wrong File: " + input)
-            files = self.dir2list(input)
+    def GetTFIDF(self, input, lists):
+        IDFInput = []
+        for x in lists:
+            if x != input:
+                WordCut = self.SegDepart(x)
+                IDFInput += WordCut
 
-            tf = self.GetTF(files[input])
-            idf = self.GetIDF(files[input], files.values())
+        tf = self.GetTF(input)
+        idf = self.GetIDF(input, IDFInput)
             
         result = {}
 

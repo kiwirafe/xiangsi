@@ -1,24 +1,19 @@
 from .main import calculator
-from .formats import FormatFuncs as fmt
-from .development import calculator as dev
-from .weight import calculator as ext
+from .kmeans import KmeansCalculator
 
 cal = calculator()
 
 cossim = cal.cossim
 minhash = cal.minhash
 simhash = cal.simhash
+ngram = cal.ngram
 
-noweight = ext()
-noweight.weight = None
+kcal = KmeansCalculator()
 
-tfweight = ext()
-tfweight.weight = "TF"
+kmeans = kcal.kmeans
+calk = kcal.calk
 
 __all__ = [
     'calculator',
-    'fmt',
-    'dev',
-    'noweight',
-    'tfweight'
+    'KmeansCalculator',
 ]

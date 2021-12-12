@@ -1,19 +1,15 @@
 import math
-import sys
 import logging
-import hashlib
 import binascii
-import time
 from . import func
 
 funcs = func.functions
 
 logging.getLogger("jieba").disabled = True
-
 try:
     logging.basicConfig(filename="xiangshi.log",
     filemode='a',
-    format='%(name)s Log - %(asctime)s - %(levelname)s %(message)s',
+    format='%(asctime)s - %(levelname)s %(message)s',
     datefmt='%D, %H:%M:%S',
     level=logging.DEBUG)
 except PermissionError:
@@ -25,11 +21,20 @@ class calculator(funcs):
         self.feature = 64
         self.HashNums = 16
         self.prime = 4294967311
+        self.weight = "no"
+    
+    def init(self, input, target=0):
+        if self.weight == "TF":
+            return self.GetTF(self.SegDepart(input[target]))
+        elif self.weight == "TFIDF":
+            return self.GetTFIDF(input[target], input)
+        else:
+            return self.Get1(self.SegDepart(input[target]))
 
-    def cossim(self, input1, input2):
+    def cossim(self, input):
         # 取TFIDF值
-        result = self.GetTFIDF(input1)
-        result2 = self.GetTFIDF(input2)
+        result = self.init(input, 0)
+        result2 = self.init(input, 1)
 
         # Merge两个Result
         merge = result.copy()
@@ -70,14 +75,14 @@ class calculator(funcs):
         FinalResult = round(FinalResult, 12)
         return FinalResult
     
-    def ngram(self, input1, input2, num=2):
+    def ngram(self, input, num=2):
         result = [] 
-        for i in range(len(input1) - num + 1):
-            result.append(input1[i:i + num]) 
+        for i in range(len(input[0]) - num + 1):
+            result.append(input[0][i:i + num]) 
 
         result2 = [] 
-        for i in range(len(input2) - num + 1):
-            result2.append(input2[i:i + num]) 
+        for i in range(len(input[1]) - num + 1):
+            result2.append(input[1][i:i + num]) 
 
         cnt = 0 
         for i in result:
@@ -87,22 +92,22 @@ class calculator(funcs):
 
         return (cnt / len(result) + cnt / len(result2)) / 2
 
-    def simhash(self, input1, input2):
-        TFIDFResult = self.SortDict(self.GetTFIDF(input1))
-        TFIDFResult2 = self.SortDict(self.GetTFIDF(input2))
+    def simhash(self, input):
+        TFIDFResult = self.SortDict(self.init(input, 0))
+        TFIDFResult2 = self.SortDict(self.init(input, 1))
 
         # 取前feature个词
         result = {k: TFIDFResult[k] for k in list(TFIDFResult)[:self.feature]}
         result2 = {k: TFIDFResult2[k] for k in list(TFIDFResult2)[:self.feature]}
 
-
+        # 哈希
         HashResults = {}
         HashResults2 = {}
         
         for key, value in result.items():
-            HashResults[self.HashString(key)] = value    
+            HashResults[bin(int(self.HashString(key), 16))[-self.feature:]] = value    
         for key, value in result2.items():
-            HashResults2[self.HashString(key)] = value
+            HashResults2[bin(int(self.HashString(key), 16))[-self.feature:]] = value
 
         result = []
         result2 = []
@@ -127,6 +132,7 @@ class calculator(funcs):
                     result2[i].append(value)
             i += 1
 
+        # 相加
         FinalResult = []
         FinalResult2 = []
         
@@ -139,6 +145,7 @@ class calculator(funcs):
             for x in result2:
                 FinalResult2[i] += x[i]
 
+        # 根据正负复制0或1
         FinalString = ""
         for x in FinalResult:
             if x > 0:
@@ -153,6 +160,7 @@ class calculator(funcs):
             else:
                 FinalString2 += "0"
 
+        # 计算Hamming距离
         hamming = 0
         for i, x in enumerate(FinalString):
             if x != FinalString2[i]:
@@ -160,9 +168,9 @@ class calculator(funcs):
 
         return 1 - hamming / self.feature
 
-    def minhash(self, input1, input2):
-        result = self.GetTFIDF(input1)
-        result2 = self.GetTFIDF(input2)
+    def minhash(self, input):
+        result = self.init(input, 0)
+        result2 = self.init(input, 1)
 
         coeff1 = self.HashAlg(self.HashNums)
         coeff2 = self.HashAlg(self.HashNums)
@@ -201,4 +209,3 @@ class calculator(funcs):
             total += y
 
         return intersect / total
-

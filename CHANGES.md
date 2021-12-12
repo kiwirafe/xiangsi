@@ -75,3 +75,8 @@
     - 修改重要IDF Bug
     - 增加Developement版本
     - 修改Logging
+  - v3.0.1:
+    - 修复List输入
+    - 暂时删除Fast版本（速度并不如相识）
+  - v3.0.2:
+    - 增加terminal调用

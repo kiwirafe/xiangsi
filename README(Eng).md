@@ -35,36 +35,130 @@ If it is slow in China, you can use Tsinghua image:
 $ pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple xiangshi
 ```
 
-### Usage method
-#### Calculate text similarity
-##### Cosine similarity
-```py
+### Usage Method
+#### Calculate Text Similarity
+##### Cosine Similarity
+```python
 import xiangshi as xs
-xs.cossim (Input1, Input2)
+xs.cossim(["I was once disappointed and lost in all directions", "Until seeing ordinary is the only answer"])
 ```
-##### Simhash & Minhash similarity
-```py
+#### Simhash & Minhash Similarity
+```python
 import xiangshi as xs
-# Simhash
-xs.simhash (Input1, Input2)
-# Minhash
-xs.minhash (Input1, Input2)
+xs.simhash(["I was once disappointed and lost in all directions", "Until seeing ordinary is the only answer"]) # Simhash
+xs.minhash(["I was once disappointed and lost in all directions", "Until seeing ordinary is the only answer"]) # Minhash
 ```
-  - When calculating the text similarity, it is automatically filtered by TFIDF
-  - Input1 - the first input value, which can be the address of a file or a list
-  - Input2 - the second input value, which can be the address of a file or a list
 
-##### Calculate TF, IDF, TFIDF
-```py
+### Clustering
+#### Calculating Kmeans Clustering example
+```python
 import xiangshi as xs
-xs.GetTF (Input)
-xs.GetIDF (Input)
-xs.GetTFIDF （Input)
+arg = [
+    "I was once disappointed and lost in all directions",
+    "Until seeing ordinary is the only answer",
+    "I used to cross the mountains and the sea",
+    "Also across the sea of ​​people",
+    "In a blink of an eye it is scattered like smoke",
+    "Everything I Owned",
+    "Cry and laugh",
+    "That piece of laughter reminds me of my flowers",
+]
+# The first input value is the number of clusters, which is 3 if the strings need to be clustered into three groups
+# The second input value is the raw data
+xs.kmeans(3, arg)
 ```
-  - Input - input value, which can be the address of a file or a list
-  - Input type for calculating text similarity
-  - At present, two types of acquaintance are supported: file and list file
+Note: kmeans automatically weights with TFIDF and uses Euclidean Distance to calculate the distance between strings
+(For the time being, other weights and other distances such as Cosine Similarity are not supported)
 
+Result format: `LoopX-String: [Cluster]`,
+(Loop)X is the number of clustering loops, String is the central string of the Cluster, and are the contents of the clusters
+
+#### Calculating the K value of Kmeans
+```python
+import xiangshi as xs
+arg = [
+    "I was once disappointed and lost in all directions",
+    "Until seeing ordinary is the only answer",
+    "I used to cross the mountains and the sea",
+    "Also across the sea of ​​people",
+    "In a blink of an eye it is scattered like smoke",
+    "Everything I Owned",
+    "Cry and laugh ordinary",
+    "That piece of laughter reminds me of my flowers",
+]
+# The first input value is the raw data
+# The second input value is the MaxNum
+xs.calk(arg, 5)
+```
+Note: calk() calculates each Kmeans from 0 to MaxNum and finds the optimal K value, which will lead to a longer time because of the large amount of calculation. The next version will support multi-threaded Kmeans with C as the core
+
+### Calculate TF, IDF, TFIDF
+```python
+import xiangshi as xs
+xs.GetTF(corpus) # Corpus is text, it must be segmented first
+xs.GetIDF(corpus, lists) # Corpus and lists are text, it must be segmented first
+xs.GetTFIDF(corpus, lists) # Corpus and lists are text, no need for segmentation
+```
+
+### Other weighting methods
+####
+```python
+xs.weight = "tf"
+xs.weight = "tfidf"
+```
+If it is TFIDF weight, append the text used for IDF to the original list.
+For example if it used to be like below when used as default
+｀xs.cossim(["I was disappointed and lost in all directions", "Until seeing ordinary is the only answer"])｀
+Then cbange it like below when using TFIDF weight
+```python
+arg = [
+    "I was once disappointed and lost in all directions",
+    "Until seeing ordinary is the only answer",
+    "I used to cross the mountains and the sea",
+    "Also across the sea of ​​people",
+    "In a blink of an eye it is scattered like smoke",
+    "Everything I Owned",
+    "Cry and laugh ordinary",
+    "That piece of laughter reminds me of my flowers",
+]
+xs.cossim(arg)
+```
+
+### Other functions
+```python
+import xiangshi as xs
+xs.file2list(file1, file2, EncodeArg="utf-8") # For v3.0.0 if you are using file input, you can use this to convert to a list and then perform Text Similarity calculations
+xs.SegDepart(corpus) # Word segmentation + stop word filtering
+xs.dict2file(dict) # Dict to File
+xs.SortDict(dict) # Dict sort
+```
+
+### Modify the default function
+```python
+import xiangshi as xs
+xs.UseLog = True
+# Whether log is used when calculating TFIDF, True is using, False is not using. The default value is True
+xs.feature = 64
+# The first TFIDF values used when calculating Simhash. The default value is 64
+xs.HashNums = 16
+# Calculate the number of hash values ​​when calculating Minhash. The default value is 16
+xs.prime = 4294967311
+# Calculate the maximum hash when calculating Minhash. The default value is 4294967311
+```
+
+## Other links:
+  - Chinese Version of README.md:
+  https://github.com/kiwirafe/xiangshi/blob/master/README.md
+  - Change Log
+  https://github.com/kiwirafe/xiangshi/blob/master/CHANGES.md
+  - Pypi:
+  https://pypi.org/project/xiangshi/
+  - Github:
+  https://github.com/kiwirafe/xiangshi
+  - Pypi Downloads:
+  https://pepy.tech/project/xiangshi
+  - Gitee (Chinese Open Source):
+  https://gitee.com/kiwirafe/xiangshi
 
 ### MIT License
 Copyright (c) [2020] [Kiwirafe]

@@ -1,19 +1,22 @@
 from . import main
 import random
 import math
-import multiprocessing
 
 cal = main.calculator
 
+# https://www.youtube.com/watch?v=4b5d3muPQmA
 class KmeansCalculator(cal):
     def __init__(self):
         super(KmeansCalculator, self).__init__()
+        self.n_init = 10
+        self.max_iter = 100
 
+    # x̄ = Σ item[i]
     def mean(self, lst):
         result = []
         for i in range(len(lst[0])):
-            TempLs = ([item[i] for item in lst])
-            result.append(sum(TempLs) / len(TempLs))
+            TempLst = ([item[i] for item in lst])
+            result.append(sum(TempLst) / len(TempLst))
 
         return result
                 
@@ -25,106 +28,109 @@ class KmeansCalculator(cal):
             
         return ans
 
+    # Calculate the variation within clusters
     def variation(self, dct):
-        lengths = [len(v) for v in dct.values()]
-        lengths.sort()
+        tfidfs = self.GetTFIDFs(dir)
+        variances = 0
+        for key, value in dct.items():
+            variance = 0
+            for subvalue in value:
+                variance += self.EuclideanDistance(tfidfs[key], tfidfs[subvalue])
+            variances += variance / len(value)
 
-        average = sum(lengths) / len(lengths)
-        power = [pow(i - average, 2) for i in lengths]
-        try:
-            power = sum(power) / (len(lengths) - 1)
-            power = math.sqrt(power)
+        return variances / len(dct)
 
-            return power / average
-        except ZeroDivisionError:
-            return math.inf
+    def IfChanged(self, dict1, dict2):
+        for CheckKey, CheckValue in dict1.items():
+            if CheckValue != dict2[CheckKey]:
+                return False
+        return True
+
+    def kneed(self, variances):
+        diffs = []
+        FirstVariance = variances[0]
+        steep = FirstVariance / len(variances)
+        for i, variance in enumerate(variances):
+            diffs.append((FirstVariance - steep * i) - variance)
+        return diffs
 
     def GetTFIDFs(self, dir):
-        TFIDFFiles = {}
-        for i in range(len(dir)):
-            TFIDFFiles[dir[i]] = self.init(dir, target=i)
+        try:
+            return self.tfidfs
+        except AttributeError:
+            TFIDFFiles = {}
+            for i in range(len(dir)):
+                TFIDFFiles[dir[i]] = self.init(dir, target=i)
 
-        """TFIDFFiles Looks Like:
-            {Text1: {"Hey": 1, "Im": 2, "Here" :3}}
-            {Text2: {"You" : 1, "Sure" :2, "?" :3}}
-        """
-        WordSet = {}
-        # Merge所有Result
-        for words in TFIDFFiles.values():
-            WordSet.update(words)
+            """TFIDFFiles Looks Like:
+                {Text1: {"Hey": 1, "Im": 2, "Here" :3}}
+                {Text2: {"You" : 1, "Sure" :2, "?" :3}}
+            """
+            WordSet = {}
+            # Merge所有Result
+            for words in TFIDFFiles.values():
+                WordSet.update(words)
 
-        # 做一个Dict，每个词标上顺序
-        WordDict = {}
-        for i, word in enumerate(WordSet):
-            WordDict[word] = i
+            # 做一个Dict，每个词标上顺序
+            WordDict = {}
+            for i, word in enumerate(WordSet):
+                WordDict[word] = i
 
-        CompletedList = {}
-        # 如果出现的话就为加权值，不出现的话为0
-        for FKey, FValue in TFIDFFiles.items():
-            ResultCut = [0] * len(WordDict)
-            for word in FValue.keys():
-                ResultCut[WordDict[word]] = FValue[word]
+            CompletedList = {}
+            # 如果出现的话就为加权值，不出现的话为0
+            for FKey, FValue in TFIDFFiles.items():
+                ResultCut = [0] * len(WordDict)
+                for word in FValue.keys():
+                    ResultCut[WordDict[word]] = FValue[word]
 
-            CompletedList[FKey] = ResultCut
+                CompletedList[FKey] = ResultCut
 
-        return CompletedList
+            self.tfidfs = CompletedList
+            return CompletedList
 
     def InitCluster(self, k, dir):
         tfidfs = self.GetTFIDFs(dir)
 
-        DefaultClusters = {}
         clustered = {}
+        means = {}
 
         random.seed(1)
         for _ in range(k):
-            key, value = random.choice(list(tfidfs.items()))
-            
-            DefaultClusters[key] = value
+            key = random.choice(list(tfidfs.keys()))
+            while key in clustered.keys():
+                key = random.choice(list(tfidfs.keys()))
             clustered[key] = []
 
         for TfidfsKey, TfidfsValue in tfidfs.items():
             lowest = math.inf
             SoonAdd = ""
-            for DefaultKey, DefaultValue in DefaultClusters.items():
-                if TfidfsKey in DefaultClusters.keys():
-                    continue
-                EucDis = self.EuclideanDistance(TfidfsValue, DefaultValue)
+            for ClusterKey in clustered.keys():
+                EucDis = self.EuclideanDistance(TfidfsValue, tfidfs[ClusterKey])
                 if EucDis < lowest:
                     lowest = EucDis
-                    SoonAdd = DefaultKey
+                    SoonAdd = ClusterKey
             
-            if SoonAdd != "":
-                clustered[SoonAdd].append(TfidfsKey)
+            clustered[SoonAdd].append(TfidfsKey)
 
-        return clustered, tfidfs
-
-    def kcluster(self, k, dir):
-        clustered, tfidfs = self.InitCluster(k, dir) #安排初始聚类
-        num = len(list(tfidfs.values())[0])
-
-        means = {}
-        NeedCal = []
-
-        # 计算DefaultCluster中的
+        # Find the mean of every cluster (x̄ = Σ item[i])
         for DefaultCluster, DefaultValue in clustered.items():
-            if len(DefaultValue) > 0:
-                for lst in DefaultValue:
-                    NeedCal.append(tfidfs[lst])
-            
-                means["Loop0-" + DefaultCluster] = self.mean(NeedCal)
-                num = len(means["Loop0-" + DefaultCluster])
-            else:
-                means["Loop0-" + DefaultCluster] = [0] * num
             NeedCal = []
+            for lst in DefaultValue:
+                NeedCal.append(tfidfs[lst])
+        
+            means[DefaultCluster] = self.mean(NeedCal)
 
         """Means Looks Like:
             {New-Text1: [1, 2, 3, 4]}
             {New-Text2: [1, 2, 3, 4]}
         """
-        
-        i = 1
-        save = {}
-        while True:
+        return means, clustered
+
+    def kcluster(self, k, dir):
+        tfidfs = self.GetTFIDFs(dir)
+        means, save = self.InitCluster(k, dir) #安排初始聚类
+
+        for _ in range(1, self.max_iter):
             MeanedResult = {}
 
             for key in means.keys():
@@ -141,67 +147,48 @@ class KmeansCalculator(cal):
                 
                 MeanedResult[SoonAdd].append(TfidfsKey)
 
-            if i > 2:
-                truth = []
-                for CheckKey, CheckValue in MeanedResult.items():
-                    SaveKey = CheckKey.replace(str(i), str(i - 1), 1)
-
-                    if list(CheckValue) == list(save[SaveKey]):
-                        truth.append(True)
-
-                if truth.count(True) == len(MeanedResult):
-                    return MeanedResult
+            # Check if nothing has changed
+            # If True then exit
+            if self.IfChanged(MeanedResult, save):
+                return MeanedResult
 
             means = {}
             save = MeanedResult
 
             for key, value in MeanedResult.items():
+                NeedCal = []
                 for lst in value:
                     NeedCal.append(tfidfs[lst])
 
-                if len(NeedCal) > 0:
-                    means["Loop" + str(i + 1) + key[5:]] = self.mean(NeedCal)
+                means[key] = self.mean(NeedCal)
                 NeedCal = []
-            
-            i += 1
 
-    def kmeans(self, k, dir):
-        for _ in range(k):
+        return MeanedResult
+            
+
+    def kmeans(self, k, dir, WithKeys=False):
+        # Calculate the best kmeans clustering
+        result = {}
+        for _ in range(self.n_init):
             lowest = math.inf
-            result = {}
             longest = self.kcluster(k, dir)
 
             if self.variation(longest) <= lowest:
                 result = longest
-
-        return result
+        if WithKeys:
+            return result
+        else:
+            return list(result.values())
+    
             
-    def calk(self, dir, MaxNum):
-        inputs = []
-        for i in range(1, MaxNum):
-            inputs.append((i, dir))
-
-        with multiprocessing.Pool(4) as p:
-            dct = p.starmap(self.kmeans, inputs)
-
-        diffs = []
-
-        for mean in dct:
-            diff = (MaxNum - i) * self.variation(mean) #要乘以(11 - i)是要让数字变大
-            diffs.append(diff)
+    def calk(self, dir):
+        variances = []
+        for i in range(1, len(dir) + 1):
+            variances.append(self.variation(self.kmeans(i, dir, True)))
         
+    	# Find the difference in variation between different k values
+        # This is to find the elbow point
+        diffs = self.kneed(variances)
 
-        d = [diffs[i + 1] - diffs[i] for i in range(len(diffs) - 1)]
-
-        # 找出最优K
-        NumLowest = 0
-        stop = 0
-        for i, num in enumerate(d):
-            if num < 0:
-                num = num * - 1
-
-            if num >= NumLowest and num != math.inf:
-                NumLowest = num
-                stop = i
-
-        return stop + 1
+        # Added one because we started from 1 but the list's index starts with 0
+        return diffs.index(max(diffs)) + 1

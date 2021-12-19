@@ -22,42 +22,37 @@ class calculator(funcs):
         self.HashNums = 16
         self.prime = 4294967311
         self.weight = "no"
-    
-    def init(self, input, target=0):
-        if self.weight == "TF":
-            return self.GetTF(self.SegDepart(input[target]))
-        elif self.weight == "TFIDF":
-            return self.GetTFIDF(input[target], input)
-        else:
-            return self.Get1(self.SegDepart(input[target]))
 
+    # https://zhuanlan.zhihu.com/p/43396514
     def cossim(self, input):
-        # 取TFIDF值
+        # Vectorize the inputs
         result = self.init(input, 0)
         result2 = self.init(input, 1)
 
-        # Merge两个Result
+        # Merge the two results into a major list
         merge = result.copy()
         merge.update(result2)
         WordSet = list(merge.keys())
 
-        # 做一个Dict，每个词标上顺序
+        # Make the merges results a dict (key: word, value:i) 
         WordDict = {}
         for i, x in enumerate(WordSet):
             WordDict[x] = i
 
-        # 做两个List，目前全为0
+        # Initialize two lists with 
+        # default values of 0 and the length of the merged results
         Result1Cut = [0] * len(WordDict)
         Result2Cut = [0] * len(WordDict)
 
-        # 如果出现的话就为加权值，不出现的话为0
+        # If the word appears in the merged result then assign the vector values
+        # else it stays as 0
         for word in result.keys():
             Result1Cut[WordDict[word]] = result[word]
 
         for word in result2.keys():
             Result2Cut[WordDict[word]] = result2[word]
 
-        # 欧几里得距离
+        # Calculate the Euclidean Distance
         TopSum = 0
         sq1 = 0
         sq2 = 0
@@ -66,7 +61,7 @@ class calculator(funcs):
             sq1 += pow(Result1Cut[i], 2)
             sq2 += pow(Result2Cut[i], 2)
 
-        # 余弦相似度
+        # Calculate the Cosine Similarity
         try:
             FinalResult = TopSum / (math.sqrt(sq1) * math.sqrt(sq2))
         except ZeroDivisionError:
@@ -92,15 +87,20 @@ class calculator(funcs):
 
         return (cnt / len(result) + cnt / len(result2)) / 2
 
+    # https://zhuanlan.zhihu.com/p/81026564
     def simhash(self, input):
+        # Vectorize the inputs
         TFIDFResult = self.SortDict(self.init(input, 0))
         TFIDFResult2 = self.SortDict(self.init(input, 1))
 
-        # 取前feature个词
+        # Use the first 64 words as the features to import speed
+        # If the features are weighted then we have used the most important ones
+        # otherwise we just have used random one
+        # but it still won't significantý change our result
         result = {k: TFIDFResult[k] for k in list(TFIDFResult)[:self.feature]}
         result2 = {k: TFIDFResult2[k] for k in list(TFIDFResult2)[:self.feature]}
 
-        # 哈希
+        # Hash the results into 64 bit binary
         HashResults = {}
         HashResults2 = {}
         
@@ -109,6 +109,7 @@ class calculator(funcs):
         for key, value in result2.items():
             HashResults2[bin(int(self.HashString(key), 16))[-self.feature:]] = value
 
+        # Weight the binaries, 0 as neg and 1 as pos
         result = []
         result2 = []
 
@@ -132,7 +133,7 @@ class calculator(funcs):
                     result2[i].append(value)
             i += 1
 
-        # 相加
+        # Add the two binaries
         FinalResult = []
         FinalResult2 = []
         
@@ -145,7 +146,7 @@ class calculator(funcs):
             for x in result2:
                 FinalResult2[i] += x[i]
 
-        # 根据正负复制0或1
+        # Weight the added binary, 0 as neg and 1 as pos
         FinalString = ""
         for x in FinalResult:
             if x > 0:
@@ -160,14 +161,16 @@ class calculator(funcs):
             else:
                 FinalString2 += "0"
 
-        # 计算Hamming距离
+        # Calculate the Hamming Distance
         hamming = 0
         for i, x in enumerate(FinalString):
             if x != FinalString2[i]:
                 hamming += 1
 
+        # Calculate the Simhash Similarity(which is 1 - Hamming Distance)
         return 1 - hamming / self.feature
 
+    # https://www.youtube.com/watch?v=96WOGPUgMfw
     def minhash(self, input):
         result = self.init(input, 0)
         result2 = self.init(input, 1)

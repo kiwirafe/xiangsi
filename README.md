@@ -28,11 +28,14 @@ pip3 install xiangshi
 pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple xiangshi
 ```
 
-### 版本v4.0.0来了！
+### v4.0.0:
   - 再次减少20%时间
   - 增加Kmeans聚类
   - 重新修改Cache方法
   - 重新修改Input输入
+#### v4.1.0:
+  - 修改Kmeans中variation的计算
+  - 输出格式修改
 
 ### 注意：
   - v4.0.0的计算结果可能和v3.0.0不一样因为v4.0.0不再自动TFIDF加权
@@ -70,23 +73,12 @@ arg = [
 # 第一个输入值为组的数量，需要聚类成三个组就为3
 # 第二个输入值为Data
 xs.kmeans(3, arg) 
+
+# 如果需要Clusters的中心：
+xs.kmeans(arg, 3, True) 
 ```
 注意：kmeans自动TFIDF加权且用欧几里得距离算出文本之间的距离
-(暂时还不支持其他加权和其他距离如Cosine Similarity)
 
-结果:
-```py
-{
-    'Loop3-我曾经跨过山和大海': 
-      ['我曾经失落失望失掉所有方向', '我曾经跨过山和大海', '我曾经拥有着的一切'], 
-    'Loop3-直到看见平凡才是唯一的答案': 
-      ['直到看见平凡才是唯一的答案', '也哭也笑平凡着'], 
-    'Loop3-转眼都飘散如烟': 
-      ['也穿过人山人海', '转眼都飘散如烟', '那片笑声让我想起我的那些花儿']
-}
-```
-注意：格式为`LoopX-String: [Cluster]`，
-(Loop)X为聚类过程的次数，String为Cluster的中心字符串，Cluster则为真正的聚类。
 
 #### 计算Kmeans的K值示例
 ```python

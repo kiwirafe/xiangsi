@@ -39,10 +39,10 @@ class functions(object):
         return output
     
     def file2list(self, input1, input2, EncodeArg="utf-8"):
-        if os.path.isfile(input1) is not True:
+        if os.path.isfile(input1) is False:
             raise Exception("Wrong File: " + input1)
         #return files
-        elif os.path.isfile(input2) is not True:
+        elif os.path.isfile(input2) is False:
             raise Exception("Wrong File: " + input2)
     
         files = []
@@ -156,3 +156,12 @@ class functions(object):
             result[key] = value * idf[key]
 
         return result
+
+    # A function that vectorizes the inputs
+    def init(self, input, target=0):
+        if self.weight == "TF":
+            return self.GetTF(self.SegDepart(input[target]))
+        elif self.weight == "TFIDF":
+            return self.GetTFIDF(input[target], input)
+        else:
+            return self.Get1(self.SegDepart(input[target]))

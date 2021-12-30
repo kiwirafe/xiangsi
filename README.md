@@ -6,8 +6,8 @@
 [![Pypi and Github License](https://img.shields.io/pypi/l/xiangshi?label=Pypi%20and%20Github%20License)](https://img.shields.io/github/license/kiwirafe/xiangshi)
 [![Language](https://img.shields.io/github/languages/top/kiwirafe/xiangshi)](https://github.com/kiwirafe/xiangshi)
 
-相识是一款专门为中文打造的文本相似度计算器。
-这是唯一也是最好的中文文本相似度计算器。
+### [在线计算文本相似度](https://xs.datavisdev.com)
+### [English Version of README](https://github.com/kiwirafe/xiangshi/blob/master/README(Eng).md)
 
 相识的优势有：
   - 专攻中文文本相似度比较
@@ -28,12 +28,13 @@ pip3 install xiangshi
 pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple xiangshi
 ```
 
+## 新版本
 ### v4.0.0:
   - 再次减少20%时间
   - 增加Kmeans聚类
   - 重新修改Cache方法
   - 重新修改Input输入
-#### v4.1.0:
+### v4.1.0:
   - 修改Kmeans中variation的计算
   - 输出格式修改
 
@@ -43,17 +44,20 @@ pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple xiangshi
 
 ## 使用方法
 ### 计算文本相似度
-
 #### 余弦相似度示例
 ```python
 import xiangshi as xs
 xs.cossim(["我曾经失落失望失掉所有方向", "直到看见平凡才是唯一的答案"])
 ```
-#### Simhash & Minhash相似度示例
+#### Simhash & Minhash & Ngram相似度示例
 ```python
 import xiangshi as xs
-xs.simhash(["我曾经失落失望失掉所有方向", "直到看见平凡才是唯一的答案"]) # Simhash
-xs.minhash(["我曾经失落失望失掉所有方向", "直到看见平凡才是唯一的答案"]) # Minhash
+# Simhash
+xs.simhash(["我曾经失落失望失掉所有方向", "直到看见平凡才是唯一的答案"])
+# Minhash
+xs.minhash(["我曾经失落失望失掉所有方向", "直到看见平凡才是唯一的答案"])
+# Ngram(适用于英文文本)
+xs.ngram(["When life gives you lemons", "eat watermelons"])
 ```
 
 ### 聚类
@@ -72,13 +76,10 @@ arg = [
 ]
 # 第一个输入值为组的数量，需要聚类成三个组就为3
 # 第二个输入值为Data
-xs.kmeans(3, arg) 
-
-# 如果需要Clusters的中心：
-xs.kmeans(arg, 3, True) 
+# 第三个输入值为是否需要Clusters的中心，True为需要，False为不需要默认值为False
+xs.kmeans(3, arg, WithKeys=True) 
 ```
 注意：kmeans自动TFIDF加权且用欧几里得距离算出文本之间的距离
-
 
 #### 计算Kmeans的K值示例
 ```python
@@ -94,21 +95,19 @@ arg = [
     "那片笑声让我想起我的那些花儿",
 ]
 # 第一个输入值为Data
-# 第二个输入值为MaxNum
-xs.calk(arg, 5) 
+xs.calk(arg) 
 ```
 注意：calk()从0到MaxNum算出每个Kmeans并找出最优K值，其中因为算量较大所以会导致时间较长。下一个版本将会支持以C为内核的多线程Kmeans
 
 ### 计算TF，IDF，TFIDF
 ```python
 import xiangshi as xs
-xs.GetTF(corpus) # Corpus为文本，必须先分词好
-xs.GetIDF(corpus, lists) #Corpus和lists为文本，必须先分词好
-xs.GetTFIDF(corpus, lists) #Corpus和lists为文本，不用分词
+xs.GetTF(corpus) # corpus为文本，必须先分词好
+xs.GetIDF(corpus, lists) # corpus和lists为文本，必须先分词好
+xs.GetTFIDF(corpus, lists) # corpus和lists为文本，不用分词
 ```
 
 ### 其它加权方法
-#### 
 ```python
 xs.weight = "tf"
 xs.weight = "tfidf"
@@ -143,29 +142,24 @@ xs.SortDict(dict) # Dict排序
 ### 修改默认函数
 ```python
 import xiangshi as xs
-xs.UseLog = True
 #计算TFIDF时是否使用log，True是使用，False是不使用。默认值为True
-xs.feature = 64
+xs.UseLog = True
 #计算Simhash时取前多少的TFIDF值。默认值为64
-xs.HashNums = 16
+xs.feature = 64
 #计算Minhash时算出多少个哈希值。默认值为16
-xs.prime = 4294967311
+xs.HashNums = 16
 #计算Minhash时的最大哈希。默认值为4294967311
+xs.prime = 4294967311
 ```
 
-### Development
-这里是给二次开发者使用的，目前只支持余弦相似度。
-```python
-from xiangshi import dev as xs
-```
-使用方法请自己看源代码
-
-## 其他链接：
+## 其他链接
+  - 在线计算文本计算器:
+  https://xs.datavisdev.com
   - English Version of README.md:
   https://github.com/kiwirafe/xiangshi/blob/master/README(Eng).md
-  - Change Log
+  - Change Log:
   https://github.com/kiwirafe/xiangshi/blob/master/CHANGES.md
-  - Pypi: 
+  - Pypi:
   https://pypi.org/project/xiangshi/
   - Github:
   https://github.com/kiwirafe/xiangshi
@@ -173,12 +167,15 @@ from xiangshi import dev as xs
   https://pepy.tech/project/xiangshi
   - Gitee（中国开源）:
   https://gitee.com/kiwirafe/xiangshi
+  - 关于算法的其他链接:
+  https://github.com/kiwirafe/xiangshi/blob/master/LINKS.md
+
 
 ## 相识寓意
 >同是天涯沦落人，相逢何必曾**相识**
 
 ## MIT License
-Copyright (c) [2020] [Kiwirafe]
+Copyright (c) [2021] [Kiwirafe]
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

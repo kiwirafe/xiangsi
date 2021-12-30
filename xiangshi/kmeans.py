@@ -4,7 +4,6 @@ import math
 
 cal = main.calculator
 
-# https://www.youtube.com/watch?v=4b5d3muPQmA
 class KmeansCalculator(cal):
     def __init__(self):
         super(KmeansCalculator, self).__init__()

@@ -75,8 +75,15 @@
     - 修改重要IDF Bug
     - 增加Developement版本
     - 修改Logging
-  - v3.0.1:
-    - 修复List输入
-    - 暂时删除Fast版本（速度并不如相识）
-  - v3.0.2:
-    - 增加terminal调用
+  - v3.0.1: 修复List输入
+  - v3.0.2: 暂时删除Fast版本（速度并不如相识）
+  - v3.1.0:
+    - 发布相识在线计算网站
+  - v4.1.0
+    - 再次减少20%时间
+    - 增加Kmeans聚类
+    - 重新修改Cache方法
+    - 重新修改Input输入
+  - v4.1.0:
+    - 修改Kmeans中variation的计算
+    - 输出格式修改

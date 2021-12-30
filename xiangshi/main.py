@@ -23,7 +23,6 @@ class calculator(funcs):
         self.prime = 4294967311
         self.weight = "no"
 
-    # https://zhuanlan.zhihu.com/p/43396514
     def cossim(self, input):
         # Vectorize the inputs
         result = self.init(input, 0)
@@ -87,7 +86,6 @@ class calculator(funcs):
 
         return (cnt / len(result) + cnt / len(result2)) / 2
 
-    # https://zhuanlan.zhihu.com/p/81026564
     def simhash(self, input):
         # Vectorize the inputs
         TFIDFResult = self.SortDict(self.init(input, 0))
@@ -170,7 +168,6 @@ class calculator(funcs):
         # Calculate the Simhash Similarity(which is 1 - Hamming Distance)
         return 1 - hamming / self.feature
 
-    # https://www.youtube.com/watch?v=96WOGPUgMfw
     def minhash(self, input):
         result = self.init(input, 0)
         result2 = self.init(input, 1)

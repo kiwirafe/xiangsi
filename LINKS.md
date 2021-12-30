@@ -1,0 +1,20 @@
+### Cossim:
+- https://zhuanlan.zhihu.com/p/43396514
+Simhash:
+- https://zhuanlan.zhihu.com/p/81026564
+- https://math.stackexchange.com/questions/3792297/is-it-possible-to-calculate-hamming-distance-as-a-percentage
+### Minhash: 
+- https://www.youtube.com/watch?v=96WOGPUgMfw
+- https://github.com/duhaime/minhash
+- https://duhaime.github.io/minhash/
+- https://github.com/kiwirafe/minhash
+### Kmeans: 
+- https://www.youtube.com/watch?v=4b5d3muPQmA
+- https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html
+### TFIDF:
+- https://towardsdatascience.com/tf-term-frequency-idf-inverse-document-frequency-from-scratch-in-python-6c2b61b78558
+### Others:
+- https://github.com/fxsjy/jieba
+- https://github.com/deepcs233/jieba_fast
+- https://51tools.info/textsimilarity.aspx
+- https://pypi.tuna.tsinghua.edu.cn/simple/xiangshi

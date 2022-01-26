@@ -1,6 +1,6 @@
 ### Cossim:
 - https://zhuanlan.zhihu.com/p/43396514
-Simhash:
+### Simhash:
 - https://zhuanlan.zhihu.com/p/81026564
 - https://math.stackexchange.com/questions/3792297/is-it-possible-to-calculate-hamming-distance-as-a-percentage
 ### Minhash: 

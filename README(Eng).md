@@ -1,9 +1,9 @@
 # Xiangshi
 
-#### Chinese Text Similarity Calculator
-#### Cossine, Simhash, Minhash Similarity Calculator
+#### Text Similarity Calculator
+#### Kmeans Clustering
 
-Pypi Version Downloads Pypi and Github License Language
+Pypi Version Downloads Pypi and Github License Language  
 [![Pypi Version](https://img.shields.io/pypi/v/xiangshi?label=Pypi%20Version)](https://img.shields.io/pypi/v/xiangshi)
 [![Downloads](https://pepy.tech/badge/xiangshi)](https://pepy.tech/project/xiangshi)
 [![Pypi and Github License](https://img.shields.io/pypi/l/xiangshi?label=Pypi%20and%20Github%20License)](https://img.shields.io/github/license/kiwirafe/xiangshi)
@@ -11,33 +11,19 @@ Pypi Version Downloads Pypi and Github License Language
 
 Xiangshi is a text similarity calculator specially designed for Chinese. This is the only and the best Chinese text similarity calculator
 
-The advantages of Xiangshi are:
-
-  - Focus on Chinese text similarity comparison
-  - Cosine calculation and simhash algorithm are used
-  - 100% Python language
-  - Automatic TFIDF filtering
-  - TF and IDF can be calculated separately
-  - List and file are supported
-  - Support multiple file similarity comparison
-  - Efficient and quick
-  - Easy to install
-  - 100% open source
-  - Long term maintenance and renewal
-
-### Download and install
+## Download and install
 PIP installation:
 ```sh
-$ pip3 install xiangshi
+pip3 install xiangshi
 ```
 If it is slow in China, you can use Tsinghua image:
 ```sh
-$ pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple xiangshi
+pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple xiangshi
 ```
 
-### Usage Method
-#### Calculate Text Similarity
-##### Cosine Similarity
+## Usage Method
+### Calculate Text Similarity
+#### Cosine Similarity
 ```python
 import xiangshi as xs
 xs.cossim(["I was once disappointed and lost in all directions", "Until seeing ordinary is the only answer"])
@@ -67,11 +53,6 @@ arg = [
 # The second input value is the raw data
 xs.kmeans(3, arg)
 ```
-Note: kmeans automatically weights with TFIDF and uses Euclidean Distance to calculate the distance between strings
-(For the time being, other weights and other distances such as Cosine Similarity are not supported)
-
-Result format: `LoopX-String: [Cluster]`,
-(Loop)X is the number of clustering loops, String is the central string of the Cluster, and are the contents of the clusters
 
 #### Calculating the K value of Kmeans
 ```python
@@ -100,7 +81,7 @@ xs.GetIDF(corpus, lists) # Corpus and lists are text, it must be segmented first
 xs.GetTFIDF(corpus, lists) # Corpus and lists are text, no need for segmentation
 ```
 
-### Other weighting methods
+### Other Weighting Methods
 ####
 ```python
 xs.weight = "tf"
@@ -124,7 +105,7 @@ arg = [
 xs.cossim(arg)
 ```
 
-### Other functions
+### Other Functions
 ```python
 import xiangshi as xs
 xs.file2list(file1, file2, EncodeArg="utf-8") # For v3.0.0 if you are using file input, you can use this to convert to a list and then perform Text Similarity calculations
@@ -133,7 +114,7 @@ xs.dict2file(dict) # Dict to File
 xs.SortDict(dict) # Dict sort
 ```
 
-### Modify the default function
+### Modify the Default Arguments
 ```python
 import xiangshi as xs
 xs.UseLog = True
@@ -146,7 +127,7 @@ xs.prime = 4294967311
 # Calculate the maximum hash when calculating Minhash. The default value is 4294967311
 ```
 
-## Other links:
+## Other Links:
   - Chinese Version of README.md:
   https://github.com/kiwirafe/xiangshi/blob/master/README.md
   - Change Log
@@ -161,7 +142,7 @@ xs.prime = 4294967311
   https://gitee.com/kiwirafe/xiangshi
 
 ### MIT License
-Copyright (c) [2020] [Kiwirafe]
+Copyright (c) [2022] [Kiwirafe]
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

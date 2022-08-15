@@ -3,11 +3,14 @@
 ### Simhash:
 - https://zhuanlan.zhihu.com/p/81026564
 - http://benwhitmore.altervista.org/simhash-and-solving-the-hamming-distance-problem-explained/?doing_wp_cron=1597564923.5549790859222412109375
+- https://www.cnblogs.com/weiguang3100/p/4183705.html
 - https://math.stackexchange.com/questions/3792297/is-it-possible-to-calculate-hamming-distance-as-a-percentage
 ### Minhash: 
 - https://www.youtube.com/watch?v=96WOGPUgMfw
 - https://github.com/duhaime/minhash
 - https://github.com/kiwirafe/minhash
+### Ngram:
+- https://zhuanlan.zhihu.com/p/60255724
 ### Kmeans: 
 - https://www.youtube.com/watch?v=4b5d3muPQmA
 - https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html

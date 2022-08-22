@@ -1,13 +1,12 @@
 # 相识(Xiangshi)
 
 ### 中文文本相似度计算器 + 中文聚类计算器
+### Chinese Text Similarity Calculator + Text Clustering ([English Version](https://github.com/kiwirafe/xiangshi/blob/master/README(Eng).md))
+### [在线计算文本相似度](https://xs.datavisdev.com)
 [![Pypi Version](https://img.shields.io/pypi/v/xiangshi?label=Pypi%20Version)](https://img.shields.io/pypi/v/xiangshi)
 [![Pypi Downloads](https://static.pepy.tech/personalized-badge/xiangshi?period=total&units=international_system&left_color=grey&right_color=blue&left_text=Pypi%20Downloads)](https://pepy.tech/project/xiangshi)
 [![Pypi and Github License](https://img.shields.io/pypi/l/xiangshi?label=Pypi%20and%20Github%20License)](https://img.shields.io/github/license/kiwirafe/xiangshi)
 [![Language](https://img.shields.io/github/languages/top/kiwirafe/xiangshi)](https://github.com/kiwirafe/xiangshi)
-
-### [在线计算文本相似度](https://xs.datavisdev.com)
-### [English Version of README](https://github.com/kiwirafe/xiangshi/blob/master/README(Eng).md)
 
 相识的优势有：
   - 专攻中文文本相似度比较

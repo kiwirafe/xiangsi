@@ -1,12 +1,9 @@
-from . import main
 import random
 import math
 
-cal = main.calculator
 
-class KmeansCalculator(cal):
+class KmeansCalculator(object):
     def __init__(self):
-        super(KmeansCalculator, self).__init__()
         self.n_init = 10
         self.max_iter = 100
 
@@ -27,6 +24,7 @@ class KmeansCalculator(cal):
             
         return ans
 
+
     # Calculate the variation within clusters
     def variation(self, dct):
         tfidfs = self.GetTFIDFs(dir)
@@ -39,11 +37,13 @@ class KmeansCalculator(cal):
 
         return variances / len(dct)
 
+
     def IfChanged(self, dict1, dict2):
         for CheckKey, CheckValue in dict1.items():
             if CheckValue != dict2[CheckKey]:
                 return False
         return True
+
 
     def kneed(self, variances):
         diffs = []
@@ -52,6 +52,7 @@ class KmeansCalculator(cal):
         for i, variance in enumerate(variances):
             diffs.append((FirstVariance - steep * i) - variance)
         return diffs
+
 
     def GetTFIDFs(self, dir):
         try:
@@ -86,6 +87,7 @@ class KmeansCalculator(cal):
 
             self.tfidfs = CompletedList
             return CompletedList
+
 
     def InitCluster(self, k, dir):
         tfidfs = self.GetTFIDFs(dir)
@@ -124,6 +126,7 @@ class KmeansCalculator(cal):
             {New-Text2: [1, 2, 3, 4]}
         """
         return means, clustered
+
 
     def kcluster(self, k, dir):
         tfidfs = self.GetTFIDFs(dir)

@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="xiangshi",
-    version="4.1.0",
+    version="4.2.0",
     author="kiwirafe",
     author_email="kiwirafe@gmail.com",
     description="中文文本相似度计算器 - 相识",

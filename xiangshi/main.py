@@ -1,179 +1,99 @@
 import math
-import logging
 import binascii
+import hashlib
 from . import func
 
-funcs = func.functions
+funcs = func.Functions()
 
-logging.getLogger("jieba").disabled = True
-try:
-    logging.basicConfig(filename="xiangshi.log",
-    filemode='a',
-    format='%(asctime)s - %(levelname)s %(message)s',
-    datefmt='%D, %H:%M:%S',
-    level=logging.DEBUG)
-except PermissionError:
-    logging.info("No Permission")
-
-class calculator(funcs):
+class Calculator(object):
     def __init__(self):
-        super(calculator, self).__init__()
         self.feature = 64
         self.HashNums = 16
         self.prime = 4294967311
-        self.weight = "no"
 
-    def cossim(self, input):
-        # Vectorize the inputs
-        result = self.init(input, 0)
-        result2 = self.init(input, 1)
+    def cossim(self, input1, input2):
+        result1 = funcs.GetWeight(input1)
+        result2 = funcs.GetWeight(input2)
 
-        # Merge the two results into a major list
-        merge = result.copy()
-        merge.update(result2)
-        WordSet = list(merge.keys())
-
-        # Make the merges results a dict (key: word, value:i) 
-        WordDict = {}
-        for i, x in enumerate(WordSet):
-            WordDict[x] = i
-
-        # Initialize two lists with 
-        # default values of 0 and the length of the merged results
-        Result1Cut = [0] * len(WordDict)
-        Result2Cut = [0] * len(WordDict)
-
-        # If the word appears in the merged result then assign the vector values
-        # else it stays as 0
-        for word in result.keys():
-            Result1Cut[WordDict[word]] = result[word]
-
-        for word in result2.keys():
-            Result2Cut[WordDict[word]] = result2[word]
-
-        # Calculate the Euclidean Distance
-        TopSum = 0
+        WordSet = list(set(result1.keys()).union(set(result2.keys())))
+        DotProduct = 0
         sq1 = 0
         sq2 = 0
-        for i in range(len(Result1Cut)):
-            TopSum += Result1Cut[i] * Result2Cut[i]
-            sq1 += pow(Result1Cut[i], 2)
-            sq2 += pow(Result2Cut[i], 2)
 
-        # Calculate the Cosine Similarity
+        for word in WordSet:
+            # Get vector value of both documents
+            vector1 = result1[word] if word in result1 else 0
+            vector2 = result2[word] if word in result2 else 0
+            
+            # Calculate Cosine Similarity for this dimension
+            DotProduct += vector1 * vector2
+            sq1 += pow(vector1, 2)
+            sq2 += pow(vector2, 2)
+
         try:
-            FinalResult = TopSum / (math.sqrt(sq1) * math.sqrt(sq2))
+            FinalResult = DotProduct / (math.sqrt(sq1) * math.sqrt(sq2))
         except ZeroDivisionError:
             FinalResult = 0.0
 
-        FinalResult = round(FinalResult, 12)
         return FinalResult
     
-    def ngram(self, input, num=2):
-        result = [] 
-        for i in range(len(input[0]) - num + 1):
-            result.append(input[0][i:i + num]) 
+    
+    def simhash(self, input1, input2):
+        result1 = funcs.GetWeight(input1)
+        result2 = funcs.GetWeight(input2)
 
-        result2 = [] 
-        for i in range(len(input[1]) - num + 1):
-            result2.append(input[1][i:i + num]) 
+        tfidf1 = {k: result1[k] for k in sorted(result1, key=result1.get, reverse=True)[:self.feature]}
+        tfidf2 = {k: result2[k] for k in sorted(result2, key=result2.get, reverse=True)[:self.feature]}
 
-        cnt = 0 
-        for i in result:
-            for j in result2:
-                if i == j:
-                    cnt += 1
+        fingerprint1 = [0] * self.feature
+        fingerprint2 = [0] * self.feature
 
-        return (cnt / len(result) + cnt / len(result2)) / 2
+        for key, value in tfidf1.items():
+            key = bin(int(hashlib.sha256(key.encode('utf-8')).hexdigest(), 16))[-self.feature:]
+            for i, x in enumerate(key):
+                fingerprint1[i] += (value * -1) if (x == '0') else value
 
-    def simhash(self, input):
-        # Vectorize the inputs
-        TFIDFResult = self.SortDict(self.init(input, 0))
-        TFIDFResult2 = self.SortDict(self.init(input, 1))
+        for key, value in tfidf2.items():
+            key = bin(int(hashlib.sha256(key.encode('utf-8')).hexdigest(), 16))[-self.feature:]
+            for i, x in enumerate(key):
+                fingerprint2[i] += (value * -1) if (x == '0') else value
 
-        # Use the first 64 words as the features to import speed
-        # If the features are weighted then we have used the most important ones
-        # otherwise we just have used random one
-        # but it still won't significantý change our result
-        result = {k: TFIDFResult[k] for k in list(TFIDFResult)[:self.feature]}
-        result2 = {k: TFIDFResult2[k] for k in list(TFIDFResult2)[:self.feature]}
-
-        # Hash the results into 64 bit binary
-        HashResults = {}
-        HashResults2 = {}
-        
-        for key, value in result.items():
-            HashResults[bin(int(self.HashString(key), 16))[-self.feature:]] = value    
-        for key, value in result2.items():
-            HashResults2[bin(int(self.HashString(key), 16))[-self.feature:]] = value
-
-        # Weight the binaries, 0 as neg and 1 as pos
-        result = []
-        result2 = []
-
-        i = 0
-        for key, value in HashResults.items():
-            result.append([])
-            for x in key:
-                if int(x) == 0:
-                    result[i].append(value * -1)
-                else:
-                    result[i].append(value)
-            i += 1
-
-        i = 0
-        for key, value in HashResults2.items():
-            result2.append([])
-            for x in key:
-                if int(x) == 0:
-                    result2[i].append(value * -1)
-                else:
-                    result2[i].append(value)
-            i += 1
-
-        # Add the two binaries
-        FinalResult = []
-        FinalResult2 = []
-        
-        for i in range(self.feature):
-            FinalResult.append(0)
-            for x in result:
-                FinalResult[i] += x[i]
-
-            FinalResult2.append(0)
-            for x in result2:
-                FinalResult2[i] += x[i]
-
-        # Weight the added binary, 0 as neg and 1 as pos
-        FinalString = ""
-        for x in FinalResult:
-            if x > 0:
-                FinalString += "1"
-            else:
-                FinalString += "0"
-
-        FinalString2 = ""
-        for x in FinalResult2:
-            if x > 0:
-                FinalString2 += "1"
-            else:
-                FinalString2 += "0"
-
-        # Calculate the Hamming Distance
         hamming = 0
-        for i, x in enumerate(FinalString):
-            if x != FinalString2[i]:
+        for i in range(self.feature):
+            # Check if both fingerprints are positive or negative.
+            # If so, then the bit on the hamming distance will be set to one.
+            if (fingerprint1[i] > 0 and fingerprint2[i] > 0) or \
+                (fingerprint1[i] <= 0 and fingerprint2[i] <= 0):
                 hamming += 1
 
-        # Calculate the Simhash Similarity(which is 1 - Hamming Distance)
-        return 1 - hamming / self.feature
 
-    def minhash(self, input):
-        result = self.init(input, 0)
-        result2 = self.init(input, 1)
+        return hamming / self.feature
 
-        coeff1 = self.HashAlg(self.HashNums)
-        coeff2 = self.HashAlg(self.HashNums)
+
+    def jaccard(self, input1, input2):
+        result1 = funcs.GetWeight(input1)
+        result2 = funcs.GetWeight(input2)
+
+        WordSet = list(set(result1.keys()).union(set(result2.keys())))
+        TopSum = 0
+        BottomSum = 0
+
+        for word in WordSet:
+            vector1 = result1[word] if word in result1 else 0
+            vector2 = result2[word] if word in result2 else 0
+            
+            TopSum += min(vector1, vector2)
+            BottomSum += max(vector1, vector2)
+
+        return TopSum / BottomSum
+    
+
+    def minhash(self, input1, input2):
+        result = funcs.GetWeight(input1)
+        result2 = funcs.GetWeight(input2)
+
+        coeff1 = funcs.HashAlg(self.HashNums)
+        coeff2 = funcs.HashAlg(self.HashNums)
 
         signature = {}
         signature2 = {}
@@ -208,4 +128,8 @@ class calculator(funcs):
                 intersect += y
             total += y
 
-        return intersect / total
+        try:
+            return intersect / total
+        except ZeroDivisionError:
+            return 0
+

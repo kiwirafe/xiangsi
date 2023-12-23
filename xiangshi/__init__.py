@@ -1,19 +1,15 @@
-from .main import calculator
-from .kmeans import KmeansCalculator
+from .func import Functions
+from .main import Calculator
 
-cal = calculator()
+fun = Functions()
+cal = Calculator()
 
+construct = fun.construct
 cossim = cal.cossim
 minhash = cal.minhash
 simhash = cal.simhash
-ngram = cal.ngram
-
-kcal = KmeansCalculator()
-
-kmeans = kcal.kmeans
-calk = kcal.calk
+jaccard = cal.jaccard
 
 __all__ = [
     'calculator',
-    'KmeansCalculator',
 ]

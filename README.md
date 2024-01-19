@@ -1,12 +1,13 @@
 # 相识(Xiangshi)
-
-#### 中文文本相似度计算器
-#### Chinese Text Similarity Calculator ([English README](https://github.com/kiwirafe/xiangshi/blob/master/README(Eng).md))
-#### [在线计算文本相似度](https://kiwirafe.com)
 [![Pypi Version](https://img.shields.io/pypi/v/xiangshi?label=Pypi%20Version)](https://img.shields.io/pypi/v/xiangshi)
 [![Pypi Downloads](https://static.pepy.tech/personalized-badge/xiangshi?period=total&units=international_system&left_color=grey&right_color=blue&left_text=Pypi%20Downloads)](https://pepy.tech/project/xiangshi)
 
+### 中文文本相似度计算器 
 相识是一个侧重于中文的文本相似度计算器，并提供４个传统相似度算法，分别是：余弦相似度，Simhash，Minhash以及Jaccard(杰卡德)。
+
+### 在线计算
+在线计算文本相似度：https://kiwirafe1.pythonanywhere.com/xiangshi
+
 
 ## 下载与安装
 Pip安装：
@@ -87,16 +88,20 @@ xs.HashNums = 16
 xs.prime = 4294967311
 ```
 
-## 目前状态
+## Repo信息
+### 目前状态
 持续维护并且持续关注Issues & Pull Requests
 
 ### 未来版本
 - 内嵌C语言提速
 - 使用BERT或类似机器学习模型实现更精确的文本相似度
 
+### 相识寓意
+>同是天涯沦落人，相逢何必曾**相识**
+
 ## 其他链接
   - 在线计算文本计算器:
-  https://kiwirafe.com
+  https://kiwirafe1.pythonanywhere.com/xiangshi
   - English Version:
   https://github.com/kiwirafe/xiangshi/blob/master/README(Eng).md
   - PyPI:
@@ -109,10 +114,6 @@ xs.prime = 4294967311
   https://gitee.com/kiwirafe/xiangshi
   - 关于算法的其他链接:
   https://github.com/kiwirafe/xiangshi/blob/master/Bibliography.md
-
-
-## 相识寓意
->同是天涯沦落人，相逢何必曾**相识**
 
 ## MIT License
 Copyright (c) [2021] [kiwirafe]

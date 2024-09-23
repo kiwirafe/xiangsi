@@ -67,16 +67,8 @@ xs.weight = "None" # 将加权方式设置为None
 xs.cossim("如何更换花呗绑定银行卡", "花呗更改绑定银行卡")
 ```
 
-### 英文文本相似度
-在v4.2.1之后，相识支持英文文本相似度（即使用英文停用词、英文分词方法）。
-```python
-import xiangshi as xs
-xs.lang = "en"
-xs.cossim("A mathematician found a solution to the problem.", "The problem was solved by a young mathematician.")
-```
-
-### 
-#### 修改默认函数
+### 修改参数
+#### 修改默认值
 ```python
 import xiangshi as xs
 #计算Simhash时取前多少的TFIDF值。默认值为64
@@ -88,19 +80,27 @@ xs.prime = 4294967311
 ```
 
 #### 修改停用词
-在v4.2.1之后，相识支持更改默认停用词：
+在v4.2.1之后，相识支持更改停用词：
 ```python
 import xiangshi as xs
 stopwords = ["你好", "世界"]
 xs.update_stopwords(stopwords)
 ```
 
+### 英文文本相似度
+在v4.2.1之后，相识支持英文文本相似度（即使用英文停用词、英文分词方法）。
+```python
+import xiangshi as xs
+xs.cossim("A mathematician found a solution to the problem.", "The problem was solved by a young mathematician.")
+```
+
 
 ## 新版本
-### v4.2.1:
+#### v4.2.2:
+  - 解决路径问题
+#### v4.2.1:
   - 支持英文文本相似度
-
-### 注意：
+#### 注意：
   - v4.2.0+文本相似度的计算结果可能和v4.1.0不一样，因为v4.1.0加权方式不同。
   - v4.2.0+文本相似度的输入均为两个`string`，且**不与**v4.1.0反向兼容。
   - v4.2.0+不再支持文本聚类（如果还有人需要的话请联系我，我会另开一个包）

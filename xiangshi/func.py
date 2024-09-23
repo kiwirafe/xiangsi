@@ -1,13 +1,15 @@
-import math
 import jieba
+import math
 import random
 import pickle
 import string
+import os
 import re
 
 class Functions(object):
     def __init__(self):
-        self.lang = "zh"
+        self.abs_path = os.path.dirname(os.path.abspath(__file__))
+        self.lang = None
         self.weight = "Default"
 
     # Algorithm: h(x) = (a*x + b) % c
@@ -33,13 +35,13 @@ class Functions(object):
 
 
     def update_stopwords(self, stopwords, lang="zh"):
-        with open(f"xiangshi/stopword_{lang}", 'w') as f:
+        with open(f"xiangshi/stopword_{lang}.txt", 'w') as f:
             for word in stopwords:
                 f.write(f"{word}\n")
 
 
     def segment_zh(self, corpus):
-        path = "xiangshi/stoptext_zh.txt"
+        path = os.path.join(self.abs_path, "stoptext_zh.txt")
         StopWords = [line.strip() for line in open(path, encoding='utf-8').readlines()]
         
         WordCut = jieba.lcut(corpus)
@@ -53,7 +55,7 @@ class Functions(object):
         return output
 
     def segment_en(self, corpus):
-        path = "xiangshi/stoptext_en.txt"
+        path = os.path.join(self.abs_path, "stoptext_en.txt")
         StopWords = [line.strip() for line in open(path, encoding='utf-8').readlines()]
         
         WordCut = [word.strip(string.punctuation) for word in corpus.split()]
@@ -80,7 +82,8 @@ class Functions(object):
             WordCut = self.segment(d)
             segmented.append(WordCut)
 
-        with open("xiangshi/cache.pickle", "wb") as handle:
+        path = os.path.join(self.abs_path, "cache.pickle")
+        with open(path, "wb") as handle:
             pickle.dump(segmented, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
@@ -110,8 +113,10 @@ class Functions(object):
     
 
     def GetTFIDF(self, input):
+        path = os.path.join(self.abs_path, "cache.pickle")
+
         tf = self.GetTF(input)
-        idf = self.GetIDF(input, pickle.load(open('xiangshi/cache.pickle', 'rb')))
+        idf = self.GetIDF(input, pickle.load(open(path, 'rb')))
 
         result = {}
         for key, value in tf.items():

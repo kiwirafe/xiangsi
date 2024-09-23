@@ -1,0 +1,14 @@
+Cossim:
+- https://zhuanlan.zhihu.com/p/43396514
+Simhash:
+- Charikar, Moses S. "Similarity estimation techniques from rounding algorithms." *Proceedings of the thiry-fourth annual ACM symposium on Theory of computing*. 2002.
+- Manku, Gurmeet Singh, Arvind Jain, and Anish Das Sarma. "Detecting near-duplicates for web crawling." *Proceedings of the 16th international conference on World Wide Web*. 2007.
+- Henzinger, Monika. "Finding near-duplicate web pages: a large-scale evaluation of algorithms." *Proceedings of the 29th annual international ACM SIGIR conference on Research and development in information retrieval*. 2006.
+- https://www.pinecone.io/learn/series/faiss/locality-sensitive-hashing-random-projection/
+- https://www.youtube.com/watch?v=lRWINdZFAo0
+Minhash: 
+- Broder, Andrei Z. "On the resemblance and containment of documents." Proceedings. Compression and Complexity of SEQUENCES 1997 (Cat. No. 97TB100171). IEEE, 1997.
+- https://www.youtube.com/watch?v=96WOGPUgMfw
+- https://github.com/duhaime/minhash
+Others:
+- https://github.com/fxsjy/jieba

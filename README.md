@@ -1,13 +1,15 @@
-# 相识(Xiangshi)
-[![Pypi Version](https://img.shields.io/pypi/v/xiangshi?label=Pypi%20Version)](https://img.shields.io/pypi/v/xiangshi)
-[![Pypi Downloads](https://static.pepy.tech/personalized-badge/xiangshi?period=total&units=international_system&left_color=grey&right_color=blue&left_text=Pypi%20Downloads)](https://pepy.tech/project/xiangshi)
+# Xiangshi
 
-### 中文文本相似度计算器 
-相识是一个侧重于中文的文本相似度计算器，并提供４个传统相似度算法，分别是：余弦相似度，Simhash，Minhash以及Jaccard(杰卡德)。
+### 中文文本相似度计算器
 
-### 在线计算
-在线计算文本相似度：https://kiwirafe1.pythonanywhere.com/xiangshi
+![Pypi Version](https://img.shields.io/pypi/v/xiangshi?label=version)
+![Downloads](https://static.pepy.tech/badge/xiangshi)
 
+简体中文 | **[English](README_en.md)**
+
+相识是一个中文文本相似度计算器，提供４个传统相似度算法，分别是：余弦相似度，Simhash，Minhash以及Jaccard(杰卡德)。
+
+[在线计算文本相似度](https://kiwirafe.pythonanywhere.com/xiangshi)
 
 ## 下载与安装
 Pip安装：
@@ -19,28 +21,16 @@ pip3 install xiangshi
 pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple xiangshi
 ```
 
-## 新版本
-### v4.2.0:
-  - 删除logging
-  - 删除`file2list`，`dict2file`等辅助函数
-  - 删除Ngrams
-  - 删除Kmeans
-  - 增加Jaccard相似度
-  - 提升余弦、Simhash相似度计算速度
-
-### 注意：
-  - v4.2.0文本相似度的计算结果可能和v4.1.0不一样，因为v4.1.0加权方式不同。
-  - v4.2.0文本相似度的输入均为两个`string`，且**不与**v4.1.0反向兼容。
-  - v4.2.0不再支持文本聚类（如果还有人需要的话请联系我，我会另开一个包）
 
 ## 使用方法
 ### 计算文本相似度
-#### 余弦相似度示例
+#### 余弦相似度
 ```python
 import xiangshi as xs
 xs.cossim("如何更换花呗绑定银行卡", "花呗更改绑定银行卡")
 ```
-#### Simhash & Minhash & Jaccard相似度示例
+
+#### Simhash & Minhash & Jaccard相似度
 ```python
 import xiangshi as xs
 # Simhash
@@ -77,7 +67,16 @@ xs.weight = "None" # 将加权方式设置为None
 xs.cossim("如何更换花呗绑定银行卡", "花呗更改绑定银行卡")
 ```
 
-### 修改默认函数
+### 英文文本相似度
+在v4.2.1之后，相识支持英文文本相似度（即使用英文停用词、英文分词方法）。
+```python
+import xiangshi as xs
+xs.lang = "en"
+xs.cossim("A mathematician found a solution to the problem.", "The problem was solved by a young mathematician.")
+```
+
+### 
+#### 修改默认函数
 ```python
 import xiangshi as xs
 #计算Simhash时取前多少的TFIDF值。默认值为64
@@ -88,22 +87,28 @@ xs.HashNums = 16
 xs.prime = 4294967311
 ```
 
-## Repo信息
-### 目前状态
-持续维护并且持续关注Issues & Pull Requests
+#### 修改停用词
+在v4.2.1之后，相识支持更改默认停用词：
+```python
+import xiangshi as xs
+stopwords = ["你好", "世界"]
+xs.update_stopwords(stopwords)
+```
 
-### 未来版本
-- 内嵌C语言提速
-- 使用BERT或类似机器学习模型实现更精确的文本相似度
 
-### 相识寓意
->同是天涯沦落人，相逢何必曾**相识**
+## 新版本
+### v4.2.1:
+  - 支持英文文本相似度
+
+### 注意：
+  - v4.2.0+文本相似度的计算结果可能和v4.1.0不一样，因为v4.1.0加权方式不同。
+  - v4.2.0+文本相似度的输入均为两个`string`，且**不与**v4.1.0反向兼容。
+  - v4.2.0+不再支持文本聚类（如果还有人需要的话请联系我，我会另开一个包）
+
 
 ## 其他链接
   - 在线计算文本计算器:
-  https://kiwirafe1.pythonanywhere.com/xiangshi
-  - English Version:
-  https://github.com/kiwirafe/xiangshi/blob/master/README(Eng).md
+  https://kiwirafe.com/xiangshi
   - PyPI:
   https://pypi.org/project/xiangshi/
   - Github:
@@ -115,23 +120,6 @@ xs.prime = 4294967311
   - 关于算法的其他链接:
   https://github.com/kiwirafe/xiangshi/blob/master/Bibliography.md
 
-## MIT License
-Copyright (c) [2021] [kiwirafe]
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+## 相识寓意
+>同是天涯沦落人，相逢何必曾**相识**

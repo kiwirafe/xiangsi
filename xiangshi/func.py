@@ -1,12 +1,13 @@
-import os
 import math
 import jieba
 import random
 import pickle
+import string
+import re
 
 class Functions(object):
     def __init__(self):
-        self.SysPath = os.path.dirname(os.path.abspath(__file__))
+        self.lang = "zh"
         self.weight = "Default"
 
     # Algorithm: h(x) = (a*x + b) % c
@@ -31,37 +32,63 @@ class Functions(object):
         return RandomList
 
 
-    def segment(self, sentence):
-        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "stoptext.txt")
-        StopWords = [line.strip() for line in open(path, \
-                encoding='utf-8').readlines()]
+    def update_stopwords(self, stopwords, lang="zh"):
+        with open(f"xiangshi/stopword_{lang}", 'w') as f:
+            for word in stopwords:
+                f.write(f"{word}\n")
+
+
+    def segment_zh(self, corpus):
+        path = "xiangshi/stoptext_zh.txt"
+        StopWords = [line.strip() for line in open(path, encoding='utf-8').readlines()]
         
-        WordCut = jieba.lcut(sentence.strip())
+        WordCut = jieba.lcut(corpus)
 
         output = []
         for word in WordCut:
             word = word.lower()
-            if word not in StopWords and word != '\n':
+            if word not in StopWords and word != '\n' and word != ' ':
                 output.append(word)
         
         return output
+
+    def segment_en(self, corpus):
+        path = "xiangshi/stoptext_en.txt"
+        StopWords = [line.strip() for line in open(path, encoding='utf-8').readlines()]
+        
+        WordCut = [word.strip(string.punctuation) for word in corpus.split()]
+
+        output = []
+        for word in WordCut:
+            word = word.lower()
+            if word not in StopWords and word != '\n' and word != ' ':
+                output.append(word)
+        
+        return output
+
+
+    def segment(self, corpus):
+        if re.search(r'[\u4e00-\u9fff]', corpus) or self.lang == "zh":
+            return self.segment_zh(corpus)
+        else:
+            return self.segment_en(corpus)
     
     
     def construct(self, data):
-        SegmentedData = []
+        segmented = []
         for d in data:
             WordCut = self.segment(d)
-            SegmentedData.append(WordCut)
+            segmented.append(WordCut)
 
-        with open('cache.pickle', 'wb') as handle:
-             pickle.dump(SegmentedData, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        with open("xiangshi/cache.pickle", "wb") as handle:
+            pickle.dump(segmented, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
     def GetTF(self, corpus):
         tf = {}
         total = len(corpus)
-        for x in corpus:
-            tf[x] = corpus.count(x) / total
+        for word in corpus:
+            tf[word] = corpus.count(word) / total
         
         return tf
     
@@ -78,20 +105,20 @@ class Functions(object):
                     freq[word] += 1
 
         for word in freq:
-            TempIDF = total / (freq[word] + 1)
-            idf[word] = math.log10(TempIDF)
+            idf[word] = math.log10(total / (freq[word] + 1))
         return idf
     
 
     def GetTFIDF(self, input):
         tf = self.GetTF(input)
-        idf = self.GetIDF(input, pickle.load(open('cache.pickle', 'rb')))
+        idf = self.GetIDF(input, pickle.load(open('xiangshi/cache.pickle', 'rb')))
 
         result = {}
         for key, value in tf.items():
             result[key] = value * idf[key]
 
         return result
+    
     
     def GetWeight(self, input):
         input = self.segment(input)

@@ -5,10 +5,10 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="xiangshi",
-    version="4.2.0",
+    version="4.2.1",
     author="kiwirafe",
     author_email="kiwirafe@gmail.com",
-    description="中文文本相似度计算器 - 相识",
+    description="中文文本相似度计算器 | Text Similarity Calculator",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/kiwirafe/xiangshi",

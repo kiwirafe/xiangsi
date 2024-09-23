@@ -11,6 +11,7 @@ class Calculator(object):
         self.HashNums = 16
         self.prime = 4294967311
 
+
     def cossim(self, input1, input2):
         result1 = funcs.GetWeight(input1)
         result2 = funcs.GetWeight(input2)
@@ -37,38 +38,6 @@ class Calculator(object):
 
         return FinalResult
     
-    
-    def simhash(self, input1, input2):
-        result1 = funcs.GetWeight(input1)
-        result2 = funcs.GetWeight(input2)
-
-        tfidf1 = {k: result1[k] for k in sorted(result1, key=result1.get, reverse=True)[:self.feature]}
-        tfidf2 = {k: result2[k] for k in sorted(result2, key=result2.get, reverse=True)[:self.feature]}
-
-        fingerprint1 = [0] * self.feature
-        fingerprint2 = [0] * self.feature
-
-        for key, value in tfidf1.items():
-            key = bin(int(hashlib.sha256(key.encode('utf-8')).hexdigest(), 16))[-self.feature:]
-            for i, x in enumerate(key):
-                fingerprint1[i] += (value * -1) if (x == '0') else value
-
-        for key, value in tfidf2.items():
-            key = bin(int(hashlib.sha256(key.encode('utf-8')).hexdigest(), 16))[-self.feature:]
-            for i, x in enumerate(key):
-                fingerprint2[i] += (value * -1) if (x == '0') else value
-
-        hamming = 0
-        for i in range(self.feature):
-            # Check if both fingerprints are positive or negative.
-            # If so, then the bit on the hamming distance will be set to one.
-            if (fingerprint1[i] > 0 and fingerprint2[i] > 0) or \
-                (fingerprint1[i] <= 0 and fingerprint2[i] <= 0):
-                hamming += 1
-
-
-        return hamming / self.feature
-
 
     def jaccard(self, input1, input2):
         result1 = funcs.GetWeight(input1)
@@ -85,7 +54,47 @@ class Calculator(object):
             TopSum += min(vector1, vector2)
             BottomSum += max(vector1, vector2)
 
-        return TopSum / BottomSum
+        try:
+            FinalResult = TopSum / BottomSum
+        except ZeroDivisionError:
+            FinalResult = 0.0
+
+        return FinalResult
+    
+    
+    def simhash(self, input1, input2):
+        result1 = funcs.GetWeight(input1)
+        result2 = funcs.GetWeight(input2)
+
+        tfidf1 = {k: result1[k] for k in sorted(result1, key=result1.get, reverse=True)[:self.feature]}
+        tfidf2 = {k: result2[k] for k in sorted(result2, key=result2.get, reverse=True)[:self.feature]}
+
+        product1 = [0] * self.feature
+        product2 = [0] * self.feature
+
+        for key, value in tfidf1.items():
+            hashed = hashlib.md5(key.encode('utf-8')).hexdigest()
+            vector = bin(int(hashed, 16))[-self.feature:]
+
+            for i, x in enumerate(vector):
+                product1[i] += value if (x == '1') else (value * -1)
+
+        for key, value in tfidf2.items():
+            hashed = hashlib.md5(key.encode('utf-8')).hexdigest()
+            vector = bin(int(hashed, 16))[-self.feature:]
+
+            for i, x in enumerate(vector):
+                product2[i] += value if (x == '1') else (value * -1)
+
+
+        fprint1 = ""
+        fprint2 = ""
+        for i in range(self.feature):
+            fprint1 += '1' if product1[i] >= 0 else '0'
+            fprint2 += '1' if product2[i] >= 0 else '0'
+
+        FinalResult = sum(pos1 == pos2 for pos1, pos2 in zip(fprint1, fprint2)) / self.feature
+        return FinalResult
     
 
     def minhash(self, input1, input2):

@@ -1,38 +1,41 @@
-# Xiangshi
+# Xiangsi
 
 ### 中文文本相似度计算器
 
-![Pypi Version](https://img.shields.io/pypi/v/xiangshi?label=version)
+![Pypi Version](https://img.shields.io/pypi/v/xiangsi?label=version)
 ![Downloads](https://static.pepy.tech/badge/xiangshi)
 
 简体中文 | **[English](README_en.md)**
 
-相识是一个中文文本相似度计算器，提供４个传统相似度算法，分别是：余弦相似度，Simhash，Minhash以及Jaccard(杰卡德)。
+Xiangsi是一个计算文本相似度的Python包，并支持中文文本（即中文分词、停用词过滤等）  
+Xiangsi提供４个传统相似度算法，分别是：余弦相似度，Simhash，Minhash以及Jaccard
 
-[在线计算文本相似度](https://kiwirafe.pythonanywhere.com/xiangshi)
+[在线计算文本相似度](https://kiwirafe.pythonanywhere.com/app/xiangsi)
 
 ## 下载与安装
 Pip安装：
 ```sh
-pip3 install xiangshi
+pip3 install xiangsi
 ```
 国内较慢的话可以使用清华镜像：
 ```sh
-pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple xiangshi
+pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple xiangsi
 ```
 
 
 ## 使用方法
 ### 计算文本相似度
+Xiangsi会自动对文本进行中文分词处理，并过滤掉停用词。之后，Xiangsi会根据所选算法计算文本相似度。
+
 #### 余弦相似度
 ```python
-import xiangshi as xs
+import xiangsi as xs
 xs.cossim("如何更换花呗绑定银行卡", "花呗更改绑定银行卡")
 ```
 
 #### Simhash & Minhash & Jaccard相似度
 ```python
-import xiangshi as xs
+import xiangsi as xs
 # Simhash
 xs.simhash("如何更换花呗绑定银行卡", "花呗更改绑定银行卡")
 # Minhash
@@ -42,7 +45,8 @@ xs.jaccard("如何更换花呗绑定银行卡", "花呗更改绑定银行卡")
 ```
 
 ### 其它加权方法 
-默认的加权方法是计算每个单词在文中出现的数量，以下还有其他两种加权方法可供选择。
+默认的加权方法是计算每个单词在文本中出现的频率。此外，还有另外两种加权方法可供选择。
+
 #### TFIDF
 ```python
 arg = [
@@ -70,7 +74,7 @@ xs.cossim("如何更换花呗绑定银行卡", "花呗更改绑定银行卡")
 ### 修改参数
 #### 修改默认值
 ```python
-import xiangshi as xs
+import xiangsi as xs
 #计算Simhash时取前多少的TFIDF值。默认值为64
 xs.feature = 64
 #计算Minhash时算出多少个哈希值。默认值为16
@@ -80,26 +84,19 @@ xs.prime = 4294967311
 ```
 
 #### 修改停用词
-在v4.2.1之后，相识支持更改停用词：
+在v4.2.1之后，Textsim支持更改停用词：
 ```python
-import xiangshi as xs
+import xiangsi as xs
 stopwords = ["你好", "世界"]
 xs.update_stopwords(stopwords)
 ```
 
-### 英文文本相似度
-在v4.2.1之后，相识支持英文文本相似度（即使用英文停用词、英文分词方法）。
-```python
-import xiangshi as xs
-xs.cossim("A mathematician found a solution to the problem.", "The problem was solved by a young mathematician.")
-```
-
 
 ## 新版本
-#### v4.2.2:
-  - 解决路径问题
-#### v4.2.1:
-  - 支持英文文本相似度
+v4.2.3: 从xiangshi改名为xiangsi  
+v4.2.2: 解决路径问题  
+v4.2.1: 支持英文文本相似度  
+
 #### 注意：
   - v4.2.0+文本相似度的计算结果可能和v4.1.0不一样，因为v4.1.0加权方式不同。
   - v4.2.0+文本相似度的输入均为两个`string`，且**不与**v4.1.0反向兼容。
@@ -108,18 +105,14 @@ xs.cossim("A mathematician found a solution to the problem.", "The problem was s
 
 ## 其他链接
   - 在线计算文本计算器:
-  https://kiwirafe.com/xiangshi
+  https://kiwirafe.com/xiangsi
   - PyPI:
-  https://pypi.org/project/xiangshi/
+  https://pypi.org/project/xiangsi/
   - Github:
-  https://github.com/kiwirafe/xiangshi
+  https://github.com/kiwirafe/xiangsi
   - 下载数量:
-  https://pepy.tech/project/xiangshi
+  https://pepy.tech/project/xiangsi
   - Gitee（中国开源）:
-  https://gitee.com/kiwirafe/xiangshi
+  https://gitee.com/kiwirafe/xiangsi
   - 关于算法的其他链接:
-  https://github.com/kiwirafe/xiangshi/blob/master/Bibliography.md
-
-
-## 相识寓意
->同是天涯沦落人，相逢何必曾**相识**
+  https://github.com/kiwirafe/xiangsi/blob/master/REFERENCE

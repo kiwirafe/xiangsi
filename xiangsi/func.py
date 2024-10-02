@@ -35,7 +35,7 @@ class Functions(object):
 
 
     def update_stopwords(self, stopwords, lang="zh"):
-        with open(f"xiangshi/stopword_{lang}.txt", 'w') as f:
+        with open(f"xiangsi/stopword_{lang}.txt", 'w') as f:
             for word in stopwords:
                 f.write(f"{word}\n")
 
